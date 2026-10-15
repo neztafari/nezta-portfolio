@@ -45,7 +45,7 @@ export const profile = {
   contact: {
     email: "neztanez@gmail.com",
     linkedin: "https://www.linkedin.com/in/nezta-misgi-febyandanu/",
-    github: ["https://github.com/neztanez", "https://github.com/neztafari"],
+    github: ["https://github.com/neztafari"],
   },
 };
 
