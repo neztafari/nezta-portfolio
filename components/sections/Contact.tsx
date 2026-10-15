@@ -2,7 +2,7 @@ import { profile } from "@/data/profile";
 import CopyEmail from "../CopyEmail";
 
 export default function Contact() {
-  const { email, linkedin, github } = profile.contact;
+  const { email, phone, linkedin, github } = profile.contact;
   return (
     <section className="section" id="contact">
       <div className="wrap">
@@ -24,6 +24,13 @@ export default function Contact() {
                 </div>
                 <CopyEmail email={email} />
               </div>
+              <a className="c-item" href={`https://wa.me/${phone.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer">
+                <div>
+                  <span className="k">phone / whatsapp</span>
+                  <span className="v">+62 818 432 630</span>
+                </div>
+                <span className="arrow">↗</span>
+              </a>
               <a className="c-item" href={linkedin} target="_blank" rel="noopener noreferrer">
                 <div>
                   <span className="k">linkedin</span>

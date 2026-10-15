@@ -44,6 +44,7 @@ export const profile = {
   interests: ["Software Development", "Quality Assurance", "Application Support"],
   contact: {
     email: "neztanez@gmail.com",
+    phone: "+62818432630",
     linkedin: "https://www.linkedin.com/in/nezta-misgi-febyandanu/",
     github: ["https://github.com/neztafari"],
   },
