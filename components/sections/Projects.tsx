@@ -1,5 +1,6 @@
 import { projects, thesis, type Project } from "@/data/profile";
 import ProjectPreview from "../previews/ProjectPreview";
+import TourViewport from "../previews/TourViewport";
 
 function ProjectCard({ project, delay, wide }: { project: Project; delay: number; wide?: boolean }) {
   return (
@@ -89,7 +90,8 @@ export default function Projects() {
           <ProjectCard project={tracker} delay={80} />
 
           <article className="card spot proj wide" data-reveal>
-            <div className="proj-preview" style={{ display: "grid", alignItems: "center" }}>
+            <div className="proj-preview tour-col">
+              <TourViewport />
               <FpsChart />
             </div>
             <div className="proj-body">

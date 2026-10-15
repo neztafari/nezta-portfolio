@@ -3294,6 +3294,336 @@ button {
   }
 }
 
+/* ---- Unity Virtual Tour: first-person viewport above the FPS chart ----
+   CSS 3D planes in cqi, so the scene scales with the panel. 18s camera loop (1s = 5.56%):
+   0–6s Navigasi Dasar walk + head bob, turn to the doorway · 6–12s Interaksi Objek turn to
+   the sofa, highlight + info card · 12–18s Full Scene Load step back, pan wide, ease home.
+   Fixed scene colors; the HUD FPS value comes from TourViewport.tsx. */
+.tour-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tour {
+  padding: 26px 26px 0;
+}
+
+.tour-view {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: #0b1020;
+  container-type: inline-size;
+}
+
+/* the eye sits at the perspective distance, so the camera is pushed back by the same amount */
+.tour-scene {
+  position: absolute;
+  inset: 0;
+  perspective: 60cqi;
+}
+
+.tour-cam {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: translateZ(60cqi) rotateY(0deg) translate3d(0cqi, 0cqi, 0cqi);
+  animation: tour-cam 18s ease-in-out infinite;
+}
+
+.tf {
+  position: absolute;
+  display: block;
+}
+
+.tf.floor {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 9.6cqi, rgba(255, 255, 255, 0.05) 9.6cqi 10cqi),
+    repeating-linear-gradient(90deg, transparent 0 9.6cqi, rgba(255, 255, 255, 0.05) 9.6cqi 10cqi),
+    #151d38;
+}
+
+.tf.ceil {
+  background: #0f1529;
+}
+
+.tf.wall {
+  background: linear-gradient(#1d2747, #172039);
+}
+
+.tf.wall.back {
+  background: linear-gradient(#212c4f, #1a2443);
+}
+
+.tf.floor.two {
+  background: #222d52;
+}
+
+.tf.wall.two {
+  background: linear-gradient(#2c3963, #243058);
+}
+
+.tf.wall.two.back {
+  background: radial-gradient(circle at 50% 40%, #3e4d85, #283462 70%);
+}
+
+.tf.art {
+  border: 0.5cqi solid #11182e;
+  background: linear-gradient(135deg, #ff4262, #4c7dff);
+  opacity: 0.85;
+}
+
+.tf.window {
+  border: 0.6cqi solid #0f1529;
+  background:
+    linear-gradient(90deg, transparent 48.5%, #0f1529 48.5% 51.5%, transparent 51.5%),
+    linear-gradient(transparent 47%, #0f1529 47% 53%, transparent 53%),
+    linear-gradient(160deg, #dbe7ff, #7d9fe9);
+  box-shadow: 0 0 6cqi 1cqi rgba(140, 170, 255, 0.45);
+}
+
+.tf.sun {
+  background: radial-gradient(closest-side, rgba(150, 180, 255, 0.22), transparent);
+}
+
+.tf.rug {
+  border-radius: 2cqi;
+  background: rgba(255, 66, 98, 0.12);
+}
+
+.tf.cab.top {
+  background: #34437b;
+}
+
+.tf.cab.front {
+  background: linear-gradient(90deg, transparent 49%, #1b2546 49% 51%, transparent 51%), #2a3866;
+}
+
+.tf.cab.side {
+  background: #222e55;
+}
+
+.tf.tbl.top {
+  background: #46548a;
+}
+
+.tf.tbl.front {
+  background: #36426c;
+}
+
+.tf.tbl.side {
+  background: #2c375c;
+}
+
+.tf.sofa {
+  animation: tour-hl 18s infinite;
+}
+
+.tf.sofa.top {
+  background: #c23c57;
+}
+
+.tf.sofa.front {
+  background: #a8324a;
+}
+
+.tf.sofa.side {
+  background: #8a2a3e;
+}
+
+/* HUD */
+.tour-hud {
+  position: absolute;
+  inset: 0;
+  font-family: var(--mono);
+  color: #e6ecff;
+  line-height: 1.2;
+}
+
+.tour-fps {
+  position: absolute;
+  top: 3.5cqi;
+  left: 3.5cqi;
+  padding: 0.6cqi 1.4cqi;
+  border-radius: 1cqi;
+  background: rgba(5, 8, 18, 0.6);
+  color: #9dffb8;
+  font-size: clamp(8px, 2.6cqi, 13px);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tour-tags {
+  position: absolute;
+  top: 10.5cqi;
+  left: 3.5cqi;
+}
+
+.tour-tags b {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.5cqi 1.4cqi;
+  border: 1px solid rgba(138, 168, 255, 0.5);
+  border-radius: 99px;
+  background: rgba(76, 125, 255, 0.28);
+  color: #dbe4ff;
+  font-size: clamp(7px, 2.2cqi, 11px);
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  animation: tour-tag 18s infinite;
+}
+
+/* static frame shows the first scenario */
+.tour-tags b:first-child {
+  opacity: 1;
+}
+
+.tour-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(3px, 0.9cqi, 6px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 0 clamp(2px, 0.6cqi, 4px) rgba(255, 255, 255, 0.15);
+  transform: translate(-50%, -50%);
+}
+
+.tour-keys {
+  position: absolute;
+  left: 3.5cqi;
+  bottom: 3cqi;
+  font-size: clamp(6px, 1.9cqi, 10px);
+  letter-spacing: 0.25em;
+  opacity: 0.4;
+}
+
+/* info card next to the sofa during Interaksi Objek */
+.tour-info {
+  position: absolute;
+  left: 58%;
+  /* stays below the fixed-size ILLUSTRATION label on small panels */
+  top: max(22%, 42px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2cqi;
+  width: 24cqi;
+  padding: 2cqi;
+  border: 1px solid rgba(138, 168, 255, 0.5);
+  border-radius: 1.5cqi;
+  background: rgba(10, 15, 30, 0.85);
+  opacity: 0;
+  transform: scale(0.9);
+  transform-origin: left center;
+  animation: tour-info 18s infinite;
+}
+
+.tour-info i {
+  height: 1.1cqi;
+  border-radius: 99px;
+  background: rgba(230, 236, 255, 0.4);
+}
+
+.tour-info i:first-child {
+  width: 70%;
+  height: 1.6cqi;
+  background: #e6ecff;
+}
+
+.tour-info i:last-child {
+  width: 55%;
+}
+
+@keyframes tour-cam {
+  0%,
+  100% {
+    transform: translateZ(60cqi) rotateY(0deg) translate3d(0cqi, 0cqi, 0cqi);
+  }
+  11.11% {
+    transform: translateZ(60cqi) rotateY(0deg) translate3d(0cqi, 0.8cqi, 13cqi);
+  }
+  16.67% {
+    transform: translateZ(60cqi) rotateY(2deg) translate3d(0cqi, 0cqi, 20cqi);
+  }
+  22.22% {
+    transform: translateZ(60cqi) rotateY(4deg) translate3d(0cqi, 0.8cqi, 28cqi);
+  }
+  27.78% {
+    transform: translateZ(60cqi) rotateY(8deg) translate3d(-1cqi, 0cqi, 35cqi);
+  }
+  33.33% {
+    transform: translateZ(60cqi) rotateY(10deg) translate3d(-2cqi, 0cqi, 40cqi);
+  }
+  38.89%,
+  61.11% {
+    transform: translateZ(60cqi) rotateY(36deg) translate3d(-2cqi, 0cqi, 40cqi);
+  }
+  66.67% {
+    transform: translateZ(60cqi) rotateY(30deg) translate3d(-2cqi, 0cqi, 40cqi);
+  }
+  75% {
+    transform: translateZ(60cqi) rotateY(10deg) translate3d(4cqi, 3cqi, 2cqi);
+  }
+  83.33%,
+  88.89% {
+    transform: translateZ(60cqi) rotateY(-12deg) translate3d(6cqi, 3cqi, -8cqi);
+  }
+}
+
+/* sofa outline 7.5–11s */
+@keyframes tour-hl {
+  0%,
+  41.67%,
+  61.11%,
+  100% {
+    box-shadow: inset 0 0 0 0 rgba(138, 168, 255, 0);
+  }
+  43.5%,
+  59.5% {
+    box-shadow: inset 0 0 0 0.35cqi #8aa8ff;
+  }
+}
+
+/* info card 8–10.5s, closed by 11s */
+@keyframes tour-info {
+  0%,
+  44.44%,
+  61.11%,
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  46.5%,
+  58.33% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* one tag per phase; each is delayed by its phase start (0s, 6s, 12s) inline */
+@keyframes tour-tag {
+  0% {
+    opacity: 0;
+  }
+  2%,
+  31% {
+    opacity: 1;
+  }
+  33.33%,
+  100% {
+    opacity: 0;
+  }
+}
+
 /* fps chart */
 .fps {
   padding: 26px;
