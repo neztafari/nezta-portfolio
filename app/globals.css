@@ -2940,44 +2940,352 @@ button {
   }
 }
 
-.pv-lines span {
-  display: block;
-  height: 7px;
-  margin: 7px 0;
-  border-radius: 4px;
-  background: var(--line);
+/* ---- ComBeats music app: one 10s loop, 1s = 10% ----
+   0–3s Browse · 3s tap 2nd track (highlights) · 3.3–3.8s Now playing slides up, track plays
+   8.5s tap the down chevron · 8.6–9.1s sheet slides down · 9–9.8s highlight fades, loop restarts
+   Fixed app colors; they do not follow the site theme. The cover pulse and the equalizer are
+   short ambient loops of their own. Same 10:16 screen in a .pv-phone.fit frame as the quota app. */
+.pv-m {
+  position: relative;
+  aspect-ratio: 10 / 16;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #f6f8fc;
+  color: #2b2f3a;
+  line-height: 1.2;
+  container-type: inline-size;
 }
 
-.pv-lines span:nth-child(2) {
-  width: 70%;
+.pv-m-browse {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5cqi;
+  padding: 9cqi 6cqi;
 }
 
-.pv-cover {
+.pv-m-appname {
+  width: 34cqi;
+  height: 3.6cqi;
+  border-radius: 99px;
+  background: #2b2f3a;
+}
+
+.pv-m-search {
+  display: flex;
+  align-items: center;
+  height: 8cqi;
+  padding: 0 3cqi;
+  border-radius: 99px;
+  background: #e9edf4;
+}
+
+.pv-m-search i {
+  width: 3.4cqi;
   aspect-ratio: 1;
-  border-radius: 12px;
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255, 66, 98, 0.8), transparent 55%),
-    radial-gradient(circle at 75% 70%, rgba(76, 125, 255, 0.9), transparent 60%),
-    var(--surface2);
+  border: 1px solid #9aa3b2;
+  border-radius: 50%;
 }
 
-.pv-eq {
+.pv-m-albums {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3.5cqi;
+}
+
+.pv-m-albums span {
+  aspect-ratio: 1;
+  border-radius: 3cqi;
+  background: linear-gradient(135deg, #2f6bff, #8fb2ff);
+}
+
+.pv-m-albums span:nth-child(2) {
+  background: linear-gradient(135deg, #1d4ed8, #5ec8ff);
+}
+
+.pv-m-albums span:nth-child(3) {
+  background: linear-gradient(135deg, #6b8cff, #c9d8ff);
+}
+
+.pv-m-tracks {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2cqi;
+}
+
+.pv-m-track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 3cqi;
+  padding: 2.6cqi 2cqi;
+  border-radius: 2.6cqi;
+}
+
+.pv-m-track.picked {
+  animation: pv-m-pick 10s infinite;
+}
+
+.pv-m-thumb {
+  flex: none;
+  width: 12cqi;
+  aspect-ratio: 1;
+  border-radius: 2cqi;
+  background: linear-gradient(135deg, #cfdcff, #a9c1ff);
+}
+
+.pv-m-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6cqi;
+  flex: 1;
+  min-width: 0;
+}
+
+.pv-m-name {
+  width: 70%;
+  height: 2.6cqi;
+  border-radius: 99px;
+  background: #2b2f3a;
+}
+
+.pv-m-artist {
+  width: 45%;
+  height: 2cqi;
+  border-radius: 99px;
+  background: #b8bfcc;
+}
+
+.pv-m small {
+  flex: none;
+  font-size: clamp(4px, 3.6cqi, 7px);
+  color: #8a93a3;
+  white-space: nowrap;
+}
+
+/* Now playing sheet */
+.pv-m-player {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3.4cqi;
+  padding: 4cqi 8cqi 6cqi;
+  border-radius: 5cqi 5cqi 0 0;
+  background: #ffffff;
+  box-shadow: 0 -2px 8px rgba(20, 30, 60, 0.08);
+  transform: translateY(102%);
+  animation: pv-m-player 10s infinite;
+}
+
+.pv-m-down {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 9cqi;
+  aspect-ratio: 1;
+}
+
+.pv-m-down svg,
+.pv-m-controls svg {
+  fill: none;
+  stroke: #2b2f3a;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pv-m-down svg {
+  width: 7cqi;
+}
+
+.pv-m-art {
+  width: 68cqi;
+  aspect-ratio: 1;
+  margin-bottom: 2cqi;
+  border-radius: 5cqi;
+  background: linear-gradient(135deg, #1d4ed8, #2f6bff 45%, #8fb2ff);
+  box-shadow: 0 6px 14px -6px rgba(47, 107, 255, 0.55);
+  animation: pv-m-pulse 1.6s ease-in-out infinite alternate;
+}
+
+.pv-m-player .pv-m-name {
+  width: 50cqi;
+  height: 3.4cqi;
+}
+
+.pv-m-player .pv-m-artist {
+  width: 32cqi;
+  height: 2.4cqi;
+}
+
+.pv-m-progress {
+  width: 100%;
+  margin-top: 2cqi;
+}
+
+.pv-m-bar {
+  display: block;
+  height: 1.6cqi;
+  border-radius: 99px;
+  background: #dfe6f5;
+  overflow: hidden;
+}
+
+/* static state is full, so reduced motion would show it filled */
+.pv-m-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: #2f6bff;
+  transform-origin: left;
+  animation: pv-m-progress 10s linear infinite;
+}
+
+.pv-m-times {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.2cqi;
+}
+
+.pv-m-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9cqi;
+}
+
+.pv-m-controls svg {
+  width: 7cqi;
+  fill: #2b2f3a;
+}
+
+.pv-m-play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.8cqi;
+  width: 15cqi;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #2f6bff;
+  box-shadow: 0 4px 10px -4px rgba(47, 107, 255, 0.7);
+}
+
+/* pause icon */
+.pv-m-play i {
+  width: 1.6cqi;
+  height: 5cqi;
+  border-radius: 1px;
+  background: #ffffff;
+}
+
+.pv-m-eq {
   display: flex;
   align-items: flex-end;
-  gap: 3px;
-  height: 34px;
-  margin: 12px 4px 8px;
+  gap: 1.2cqi;
+  height: 9cqi;
 }
 
-.pv-eq i {
-  flex: 1;
-  border-radius: 2px;
-  background: var(--red);
+.pv-m-eq i {
+  width: 1.8cqi;
+  height: 100%;
+  border-radius: 1px;
+  background: #2f6bff;
   transform-origin: bottom;
-  animation: eq 1.1s ease-in-out infinite alternate;
+  animation: pv-m-eq 0.9s ease-in-out infinite alternate;
 }
 
-@keyframes eq {
+/* one tap ripple, shifted to each tap time with an inline animationDelay */
+.pv-m-tap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 11cqi;
+  aspect-ratio: 1;
+  border: 1px solid #2f6bff;
+  border-radius: 50%;
+  background: rgba(47, 107, 255, 0.22);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.45);
+  pointer-events: none;
+  animation: pv-m-tap 10s infinite;
+}
+
+/* ---- keyframes ---- */
+
+@keyframes pv-m-tap {
+  0% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.45);
+  }
+  4%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.7);
+  }
+}
+
+/* 2nd track: highlighted from the 3s tap, fades out 9–9.8s */
+@keyframes pv-m-pick {
+  0%,
+  30% {
+    background: rgba(230, 238, 255, 0);
+  }
+  31.5%,
+  90% {
+    background: #e6eeff;
+  }
+  98%,
+  100% {
+    background: rgba(230, 238, 255, 0);
+  }
+}
+
+/* sheet up 3.3–3.8s, down 8.6–9.1s */
+@keyframes pv-m-player {
+  0%,
+  33% {
+    transform: translateY(102%);
+  }
+  38%,
+  86% {
+    transform: translateY(0);
+  }
+  91%,
+  100% {
+    transform: translateY(102%);
+  }
+}
+
+/* 0:00 → 0:30 while the sheet is up, reset once it is hidden */
+@keyframes pv-m-progress {
+  0%,
+  38% {
+    transform: scaleX(0);
+  }
+  85%,
+  91% {
+    transform: scaleX(1);
+  }
+  92%,
+  100% {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes pv-m-pulse {
+  from {
+    transform: scale(0.97);
+  }
+  to {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes pv-m-eq {
   from {
     transform: scaleY(0.25);
   }

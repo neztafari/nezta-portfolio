@@ -398,19 +398,79 @@ function PhoneQuota() {
   );
 }
 
+// Abstract music app on one 10s CSS loop: Browse, a tapped track opens the
+// Now playing sheet, the track plays, then the sheet closes back to Browse.
+function MusicTap({ at }: { at: number }) {
+  return <i className="pv-m-tap" style={{ animationDelay: `${at}s` }} />;
+}
+
 function PhoneMusic() {
   return (
-    <div className="pv-phone">
+    <div className="pv-phone fit">
       <div className="pv-notch" />
-      <div className="pv-cover" />
-      <div className="pv-eq">
-        {Array.from({ length: 12 }, (_, i) => (
-          <i key={i} style={{ animationDelay: `${(i % 5) * -0.22}s`, animationDuration: `${0.8 + (i % 3) * 0.25}s` }} />
-        ))}
-      </div>
-      <div className="pv-lines">
-        <span />
-        <span />
+      <div className="pv-m">
+        <div className="pv-m-browse">
+          <span className="pv-m-appname" />
+          <span className="pv-m-search">
+            <i />
+          </span>
+          <div className="pv-m-albums">
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className="pv-m-tracks">
+            {Array.from({ length: 4 }, (_, i) => (
+              <div key={i} className={`pv-m-track${i === 1 ? " picked" : ""}`}>
+                <span className="pv-m-thumb" />
+                <span className="pv-m-meta">
+                  <span className="pv-m-name" />
+                  <span className="pv-m-artist" />
+                </span>
+                <small>0:30</small>
+                {i === 1 && <MusicTap at={3} />}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="pv-m-player">
+          <span className="pv-m-down">
+            <svg viewBox="0 0 12 12">
+              <path d="M3 4.5L6 7.5L9 4.5" />
+            </svg>
+            <MusicTap at={8.5} />
+          </span>
+          <span className="pv-m-art" />
+          <span className="pv-m-name" />
+          <span className="pv-m-artist" />
+          <div className="pv-m-progress">
+            <span className="pv-m-bar">
+              <span />
+            </span>
+            <span className="pv-m-times">
+              <small>0:00</small>
+              <small>0:30</small>
+            </span>
+          </div>
+          <div className="pv-m-controls">
+            <svg viewBox="0 0 12 12">
+              <path d="M3 2.5V9.5M9.5 2.5L4.5 6L9.5 9.5Z" />
+            </svg>
+            <span className="pv-m-play">
+              <i />
+              <i />
+            </span>
+            <svg viewBox="0 0 12 12">
+              <path d="M9 2.5V9.5M2.5 2.5L7.5 6L2.5 9.5Z" />
+            </svg>
+          </div>
+          <div className="pv-m-eq">
+            {Array.from({ length: 5 }, (_, i) => (
+              <i key={i} style={{ animationDelay: `${(i % 3) * -0.25}s`, animationDuration: `${0.7 + (i % 2) * 0.3}s` }} />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
