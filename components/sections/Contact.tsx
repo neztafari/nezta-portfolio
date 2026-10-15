@@ -53,7 +53,7 @@ export default function Contact() {
 
         <footer className="footer">
           <span>© 2026 Nezta Misgi Febyandanu</span>
-          <span>Built with Next.js · deployed on Vercel</span>
+          <span>Built with Next.js</span>
         </footer>
       </div>
     </section>

@@ -51,4 +51,4 @@ public/
 ## Catatan
 
 - Flight Tracker dan DX Workspace adalah proyek internal Garuda Indonesia. Pastikan sudah diizinkan sebelum website dipublikasikan, dan jangan pakai screenshot yang menampilkan data internal.
-- Deploy: push ke GitHub, lalu import repo di https://vercel.com.
+- Deploy: push ke GitHub, lalu import repo di https://app.netlify.com.
