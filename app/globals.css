@@ -2440,6 +2440,16 @@ button {
   }
 }
 
+/* Data Quota: the frame hugs its 10:16 screen with a bottom bezel equal to the sides,
+   and is centered vertically so the whole phone stays inside the preview */
+.pv-phone.fit {
+  inset-block: 0;
+  height: fit-content;
+  aspect-ratio: auto;
+  margin-block: auto;
+  padding-bottom: 10px;
+}
+
 .pv-notch {
   width: 36%;
   height: 6px;
@@ -2448,42 +2458,466 @@ button {
   background: var(--line2);
 }
 
-.pv-ring {
+/* ---- Data Quota Tracker: one 12s loop, 1s = 8.33% ----
+   0–3.5s Home · 3.4s tap Pilih tab · 4.2–5.2s amount types in · 6s tap Cari
+   6.3s+ packages in · 8s tap first package · 8.2s popup · 10.5s tap Tutup · 11–12s back to Home
+   Fixed app colors; they do not follow the site theme. The screen keeps a 10:16 shape so it
+   ends above the point where the preview crops the phone frame. */
+.pv-q {
   position: relative;
-  width: 70%;
+  aspect-ratio: 10 / 16;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #f4f5f7;
+  color: #1f2430;
+  line-height: 1.2;
+  container-type: inline-size;
+}
+
+.pv-q-home,
+.pv-q-pilih {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3cqi;
+  background: #f4f5f7;
+}
+
+.pv-q-head {
+  display: flex;
+  align-items: center;
+  gap: 4cqi;
+  flex: none;
+  height: 34cqi;
+  padding: 0 6cqi 8cqi;
+  background: linear-gradient(135deg, #e5303d, #ff5c8a);
+  color: #ffffff;
+}
+
+.pv-q-avatar {
+  flex: none;
+  width: 12cqi;
   aspect-ratio: 1;
-  margin: 8px auto 12px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
 }
 
-.pv-ring svg {
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
+.pv-q-hi {
+  flex: 1;
+  min-width: 0;
 }
 
-.pv-ring .bg {
+.pv-q-hi b {
+  display: block;
+  margin-bottom: 2cqi;
+  font-size: clamp(5px, 6.5cqi, 10px);
+  white-space: nowrap;
+}
+
+.pv-q-hi span {
+  display: block;
+  width: 60%;
+  height: 2.4cqi;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.pv-q-out {
+  flex: none;
+  width: 9cqi;
   fill: none;
-  stroke: var(--line);
-  stroke-width: 10;
-}
-
-.pv-ring .fg {
-  fill: none;
-  stroke: var(--blue);
-  stroke-width: 10;
+  stroke: #ffffff;
+  stroke-width: 1.2;
   stroke-linecap: round;
-  stroke-dasharray: 251;
-  stroke-dashoffset: 80;
+  stroke-linejoin: round;
 }
 
-.pv-ring b {
+.pv-q-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4cqi;
+  margin: -10cqi 6cqi 0;
+  padding: 4cqi;
+  border-radius: 4cqi;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(20, 24, 40, 0.08);
+}
+
+.pv-q-title,
+.pv-q-section {
+  font-size: clamp(5px, 5.5cqi, 9px);
+  white-space: nowrap;
+}
+
+.pv-q-section {
+  margin: 1cqi 6cqi -1cqi;
+}
+
+.pv-q-meter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4cqi;
+}
+
+.pv-q-meter-label {
+  width: 30%;
+  height: 2cqi;
+  border-radius: 99px;
+  background: #d6d9e0;
+}
+
+.pv-q-track {
+  height: 3cqi;
+  border-radius: 99px;
+  background: #fde3e5;
+  overflow: hidden;
+}
+
+/* width is set inline; the static state is filled for reduced motion */
+.pv-q-fill {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: #e5303d;
+  transform-origin: left;
+  animation: pv-q-fill 12s infinite;
+}
+
+.pv-q-apps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 3.5cqi;
+  margin: 0 6cqi;
+}
+
+.pv-q-apps span {
+  aspect-ratio: 1;
+  border-radius: 3.5cqi;
+}
+
+/* Pilih screen fades in over Home and out again at the end */
+.pv-q-pilih {
+  opacity: 0;
+  animation: pv-q-pilih 12s infinite;
+}
+
+.pv-q-lbl {
+  width: 35%;
+  height: 2cqi;
+  border-radius: 99px;
+  background: #d6d9e0;
+}
+
+.pv-q-input {
+  height: 8cqi;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #d6d9e0;
+  font-size: clamp(5px, 5cqi, 8px);
+  white-space: nowrap;
+}
+
+.pv-q-input span {
+  animation: pv-q-type 12s infinite;
+}
+
+.pv-q-btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 8cqi;
+  border-radius: 2.4cqi;
+  background: #e5303d;
+  color: #ffffff;
+  font-size: clamp(5px, 4.6cqi, 8px);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pv-q-btn.sm {
+  align-self: center;
+  width: 40%;
+  height: 7cqi;
+  margin-top: 1cqi;
+}
+
+.pv-q-pkg {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5cqi;
+  margin: 0 6cqi;
+  padding: 3cqi;
+  border-radius: 3cqi;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(20, 24, 40, 0.08);
+  animation: pv-q-pkg 12s infinite;
+}
+
+.pv-q-pkg-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2cqi;
+}
+
+.pv-q-pkg-title {
+  width: 45%;
+  height: 2.6cqi;
+  border-radius: 99px;
+  background: #3a3f4b;
+}
+
+.pv-q small,
+.pv-q-pop small {
+  font-size: clamp(4px, 3.8cqi, 7px);
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.pv-q-price {
+  width: 35%;
+  height: 2.6cqi;
+  border-radius: 99px;
+  background: #e5303d;
+}
+
+.pv-q-bullet {
+  position: relative;
+  width: 55%;
+  height: 1.8cqi;
+  margin-left: 2.6cqi;
+  border-radius: 99px;
+  background: #d6d9e0;
+}
+
+.pv-q-bullet::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -2.6cqi;
+  width: 1.4cqi;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #e5303d;
+  transform: translateY(-50%);
+}
+
+.pv-q-bullet + .pv-q-bullet {
+  width: 40%;
+}
+
+/* bottom nav; the red active color moves from icon one to icon two */
+.pv-q-nav {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  height: 14cqi;
+  border-top: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.pv-q-navi {
+  position: relative;
+  display: grid;
+  place-items: center;
+  color: #a0a6b2;
+}
+
+.pv-q-navi svg {
+  width: 7cqi;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pv-q-navi.one {
+  color: #e5303d;
+  animation: pv-q-nav-one 12s infinite;
+}
+
+.pv-q-navi.two {
+  animation: pv-q-nav-two 12s infinite;
+}
+
+/* popup over a dimmed screen */
+.pv-q-modal {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  font-family: var(--display);
-  font-size: 15px;
-  color: var(--ink);
+  background: rgba(15, 18, 30, 0.45);
+  opacity: 0;
+  animation: pv-q-modal 12s infinite;
+}
+
+.pv-q-pop {
+  display: flex;
+  flex-direction: column;
+  gap: 2cqi;
+  width: 74cqi;
+  padding: 5cqi;
+  border-radius: 4cqi;
+  background: #ffffff;
+  transform: scale(0.9);
+  animation: pv-q-pop 12s infinite;
+}
+
+/* one tap ripple, shifted to each tap time with an inline animationDelay */
+.pv-q-tap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 11cqi;
+  aspect-ratio: 1;
+  border: 1px solid #e5303d;
+  border-radius: 50%;
+  background: rgba(229, 48, 61, 0.25);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.45);
+  pointer-events: none;
+  animation: pv-q-tap 12s infinite;
+}
+
+.pv-q-btn .pv-q-tap {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* ---- keyframes, all 12s ---- */
+
+@keyframes pv-q-tap {
+  0% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.45);
+  }
+  3.33%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.7);
+  }
+}
+
+/* meters fill 0.3–2.5s, then reset while Home is covered */
+@keyframes pv-q-fill {
+  0%,
+  2.5% {
+    transform: scaleX(0);
+  }
+  20.83%,
+  85% {
+    transform: scaleX(1);
+  }
+  86%,
+  100% {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes pv-q-nav-one {
+  0%,
+  29.17%,
+  96.5%,
+  100% {
+    color: #e5303d;
+  }
+  29.6%,
+  95.83% {
+    color: #a0a6b2;
+  }
+}
+
+@keyframes pv-q-nav-two {
+  0%,
+  29.17%,
+  96.5%,
+  100% {
+    color: #a0a6b2;
+  }
+  29.6%,
+  95.83% {
+    color: #e5303d;
+  }
+}
+
+/* Pilih in 3.5–3.9s, out 11–12s */
+@keyframes pv-q-pilih {
+  0%,
+  29.17% {
+    opacity: 0;
+  }
+  32.5%,
+  91.67% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* "Rp 100.000" types in 4.2–5.2s */
+@keyframes pv-q-type {
+  0%,
+  35% {
+    clip-path: inset(0 100% 0 0);
+    animation-timing-function: steps(10, end);
+  }
+  43.33%,
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* packages in from 6.3s; each card is delayed 0.2s more inline */
+@keyframes pv-q-pkg {
+  0%,
+  52.5% {
+    opacity: 0;
+    transform: translateY(4cqi);
+  }
+  56.67%,
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* popup 8.2–8.6s in, 10.7–11s out */
+@keyframes pv-q-modal {
+  0%,
+  68.33% {
+    opacity: 0;
+  }
+  71.67%,
+  89.17% {
+    opacity: 1;
+  }
+  91.67%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes pv-q-pop {
+  0%,
+  68.33% {
+    transform: scale(0.9);
+  }
+  71.67%,
+  89.17% {
+    transform: scale(1);
+  }
+  91.67%,
+  100% {
+    transform: scale(0.9);
+  }
 }
 
 .pv-lines span {

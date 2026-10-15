@@ -277,21 +277,122 @@ function Radar() {
   );
 }
 
+// Abstract quota app on one 12s CSS loop: Home, then the Pilih tab, a typed
+// amount, package results, a package popup, and back to Home. Taps are one
+// shared ripple keyframe shifted by animationDelay.
+const quotaApps = ["#ffb703", "#3a86ff", "#8338ec", "#06d6a0", "#ff6b6b", "#118ab2", "#f4a261", "#2ec4b6"];
+
+function QuotaHeader() {
+  return (
+    <div className="pv-q-head">
+      <i className="pv-q-avatar" />
+      <div className="pv-q-hi">
+        <b>Halo, User</b>
+        <span />
+      </div>
+      <svg className="pv-q-out" viewBox="0 0 12 12">
+        <path d="M5 2H2.5v8H5M7.5 4L10 6L7.5 8M10 6H5" />
+      </svg>
+    </div>
+  );
+}
+
+function QuotaTap({ at }: { at: number }) {
+  return <i className="pv-q-tap" style={{ animationDelay: `${at}s` }} />;
+}
+
 function PhoneQuota() {
   return (
-    <div className="pv-phone">
+    <div className="pv-phone fit">
       <div className="pv-notch" />
-      <div className="pv-ring">
-        <svg viewBox="0 0 100 100">
-          <circle className="bg" cx="50" cy="50" r="40" />
-          <circle className="fg" cx="50" cy="50" r="40" />
-        </svg>
-        <b>68%</b>
-      </div>
-      <div className="pv-lines">
-        <span />
-        <span />
-        <span />
+      <div className="pv-q">
+        <div className="pv-q-home">
+          <QuotaHeader />
+          <div className="pv-q-card">
+            <b className="pv-q-title">Paket Terpilih</b>
+            {[72, 45].map((w) => (
+              <div key={w} className="pv-q-meter">
+                <span className="pv-q-meter-label" />
+                <span className="pv-q-track">
+                  <span className="pv-q-fill" style={{ width: `${w}%` }} />
+                </span>
+              </div>
+            ))}
+          </div>
+          <b className="pv-q-section">Aplikasi</b>
+          <div className="pv-q-apps">
+            {quotaApps.map((c) => (
+              <span key={c} style={{ background: c }} />
+            ))}
+          </div>
+        </div>
+
+        <div className="pv-q-pilih">
+          <QuotaHeader />
+          <div className="pv-q-card">
+            <span className="pv-q-lbl" />
+            <div className="pv-q-input">
+              <span>Rp 100.000</span>
+            </div>
+            <span className="pv-q-btn">
+              Cari
+              <QuotaTap at={6} />
+            </span>
+          </div>
+          {Array.from({ length: 3 }, (_, i) => (
+            <div key={i} className="pv-q-pkg" style={{ animationDelay: `${i * 0.2}s` }}>
+              <div className="pv-q-pkg-top">
+                <span className="pv-q-pkg-title" />
+                <small>30 Hari</small>
+              </div>
+              <span className="pv-q-price" />
+              <span className="pv-q-bullet" />
+              <span className="pv-q-bullet" />
+              {i === 0 && <QuotaTap at={8} />}
+            </div>
+          ))}
+        </div>
+
+        <div className="pv-q-nav">
+          <span className="pv-q-navi one">
+            <svg viewBox="0 0 12 12">
+              <path d="M2 6L6 2.5L10 6V10H2Z" />
+            </svg>
+          </span>
+          <span className="pv-q-navi two">
+            <svg viewBox="0 0 12 12">
+              <path d="M3 3.5H9M3 6H9M3 8.5H7" />
+            </svg>
+            <QuotaTap at={3.4} />
+          </span>
+          <span className="pv-q-navi">
+            <svg viewBox="0 0 12 12">
+              <circle cx="6" cy="6" r="4" />
+              <path d="M6 3.8V6L7.6 7" />
+            </svg>
+          </span>
+          <span className="pv-q-navi">
+            <svg viewBox="0 0 12 12">
+              <circle cx="6" cy="4.5" r="2" />
+              <path d="M2.5 10.5C3 8.3 9 8.3 9.5 10.5" />
+            </svg>
+          </span>
+        </div>
+
+        <div className="pv-q-modal">
+          <div className="pv-q-pop">
+            <span className="pv-q-pkg-title" />
+            <small>30 Hari</small>
+            <span className="pv-q-price" />
+            <span className="pv-q-bullet" />
+            <span className="pv-q-bullet" />
+            <span className="pv-q-bullet" />
+            <span className="pv-q-btn sm">
+              Tutup
+              <QuotaTap at={10.5} />
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );
