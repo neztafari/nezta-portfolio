@@ -116,7 +116,7 @@ export const experiences: Experience[] = [
 
 export const projects: Project[] = [
   {
-    kind: "2026 · Garuda Indonesia · internal",
+    kind: "2026 · Garuda Indonesia internship · internal",
     title: "e-AFL",
     preview: "tablet",
     internal: true,
@@ -125,7 +125,7 @@ export const projects: Project[] = [
     tags: ["Flutter", "Dart", "Tablet UI", "Dark Mode", "API Integration"],
   },
   {
-    kind: "2026 · Garuda Indonesia · internal",
+    kind: "2026 · Garuda Indonesia internship · internal",
     title: "DX Workspace",
     preview: "dashboard",
     internal: true,
@@ -134,7 +134,7 @@ export const projects: Project[] = [
     tags: ["Next.js", "React", "UI Redesign"],
   },
   {
-    kind: "2026 · Garuda Indonesia · proof of concept",
+    kind: "2026 · Garuda Indonesia internship · proof of concept",
     title: "Flight Tracker",
     preview: "radar",
     internal: true,

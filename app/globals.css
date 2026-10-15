@@ -1934,7 +1934,8 @@ button {
 
 /* ---- e-AFL flow: one 14s loop, 1s = 7.14% ----
    0–2s night mode on · 3s tap first card · 3.5–4s sheet up · 6.5s tap Create New
-   6.7–7.2s sheet down · 7–7.5s form in · 7.8s+ values type in · 13–14s fade to light */
+   6.7–7.2s sheet down · 7–7.5s form in · 7.8s+ values type in
+   12.6–13.1s form out (contents, then panel) · 13.2–14s dark → light, toggle off */
 
 .pv-s-card {
   position: relative;
@@ -2247,16 +2248,21 @@ button {
   margin-top: auto;
 }
 
+/* the form's contents fade out before its panel does (see pv-form-content) */
+.pv-fscreen > * {
+  animation: pv-form-content 14s infinite;
+}
+
 /* ---- keyframes, all 14s ---- */
 
-/* dark dashboard: fades in 1–2s, out 13–14s */
+/* dark dashboard: fades in 1–2s, stays opaque under the form's exit, crossfades to light 13.2–14s */
 @keyframes pv-night {
   0%,
   7.14% {
     opacity: 0;
   }
   14.29%,
-  92.86% {
+  94.29% {
     opacity: 1;
   }
   100% {
@@ -2264,7 +2270,7 @@ button {
   }
 }
 
-/* toggle: on at ~1s, off again during the final fade */
+/* toggle: on at ~1s, slides off during the final dark → light crossfade (13.2–14s) */
 @keyframes pv-track {
   0%,
   5.71%,
@@ -2272,7 +2278,7 @@ button {
     background: rgba(30, 41, 59, 0.22);
   }
   8.57%,
-  92.86% {
+  94.29% {
     background: #1f6fd1;
   }
 }
@@ -2284,7 +2290,7 @@ button {
     transform: translateX(0);
   }
   8.57%,
-  92.86% {
+  94.29% {
     transform: translateX(calc(var(--sw) - var(--sh)));
   }
 }
@@ -2369,7 +2375,9 @@ button {
   }
 }
 
-/* form in from the right 7–7.5s, hold, fade out 13–14s; it jumps back off-screen while invisible */
+/* form in from the right 7–7.5s, hold; at the end its contents fade first (12.6–12.9s),
+   then the empty panel (same color as the dark dashboard) fades 12.9–13.1s, so form text
+   never overlaps dashboard text. It jumps back off-screen while invisible. */
 @keyframes pv-form {
   0%,
   50% {
@@ -2377,12 +2385,24 @@ button {
     opacity: 1;
   }
   53.57%,
-  92.86% {
+  92.14% {
     transform: translateX(0);
     opacity: 1;
   }
+  93.57%,
   100% {
     transform: translateX(0);
+    opacity: 0;
+  }
+}
+
+@keyframes pv-form-content {
+  0%,
+  90% {
+    opacity: 1;
+  }
+  92.14%,
+  100% {
     opacity: 0;
   }
 }
