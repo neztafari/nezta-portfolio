@@ -54,7 +54,7 @@ export const profile = {
 export const introSteps = [
   { title: "Mobile apps", tech: ["Flutter", "React Native"] },
   { title: "Web apps", tech: ["Next.js", "React"] },
-  { title: "Browser 3D", tech: ["Unity", "WebGL"] },
+  { title: "3D web apps", tech: ["Unity", "WebGL"] },
 ];
 
 export const facts = [
