@@ -37,14 +37,14 @@ components/
 data/
   profile.ts        SEMUA isi CV ada di sini
 public/
-  nezta.jpg         foto profil
+  nezta-grad.jpg    foto profil (potret 2:3)
   projects/         taruh screenshot project di sini
 ```
 
 ## Ganti isi
 
 - **Isi CV** (pengalaman, project, skill, sertifikat): edit `data/profile.ts` saja.
-- **Foto profil**: ganti `public/nezta.jpg` dengan foto baru (rasio 4:5, nama file sama).
+- **Foto profil**: ganti `public/nezta-grad.jpg` dengan foto baru (potret 2:3, nama file sama). Foto dipotong ke bingkai 4:5; atur bagian yang terlihat lewat prop `position` (object-position, mis. `"40% 22%"`) dan sesuaikan `width`/`height` dengan ukuran asli foto di `components/sections/Hero.tsx`.
 - **Screenshot project**: simpan gambar di `public/projects/`, misalnya `dx-workspace.png`, lalu di `data/profile.ts` tambahkan `image: "/projects/dx-workspace.png"` pada project itu. Ilustrasi otomatis diganti screenshot.
 - **Warna**: variabel `--blue` dan `--red` di bagian atas `app/globals.css`.
 

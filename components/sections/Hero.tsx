@@ -38,7 +38,15 @@ export default function Hero() {
           </div>
 
           <div className="photo-wrap">
-            <TiltPhoto src="/nezta.jpg" alt={`${profile.name.first} ${profile.name.last}`} location={profile.location} />
+            {/* 2:3 portrait in a 4:5 frame: keep the face (upper left) and the UNDIP sash in view */}
+            <TiltPhoto
+              src="/nezta-grad.jpg"
+              alt="Nezta Misgi Febyandanu at his UNDIP graduation"
+              width={1067}
+              height={1600}
+              position="40% 22%"
+              location={profile.location}
+            />
           </div>
         </div>
 

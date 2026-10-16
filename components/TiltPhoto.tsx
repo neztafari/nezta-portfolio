@@ -3,7 +3,17 @@
 import Image from "next/image";
 import { useRef } from "react";
 
-export default function TiltPhoto({ src, alt, location }: { src: string; alt: string; location: string }) {
+type Props = {
+  src: string;
+  alt: string;
+  location: string;
+  // intrinsic size of the source image and the focal point kept in view by object-fit: cover
+  width: number;
+  height: number;
+  position?: string;
+};
+
+export default function TiltPhoto({ src, alt, location, width, height, position }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -31,8 +41,9 @@ export default function TiltPhoto({ src, alt, location }: { src: string; alt: st
       <Image
         src={src}
         alt={alt}
-        width={700}
-        height={875}
+        width={width}
+        height={height}
+        style={position ? { objectPosition: position } : undefined}
         sizes="(max-width: 412px) calc(100vw - 32px), 380px"
         loading="eager"
         fetchPriority="high"
