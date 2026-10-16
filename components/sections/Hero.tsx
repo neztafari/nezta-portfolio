@@ -4,10 +4,11 @@ import HeroField from "../HeroField";
 import RotatingWord from "../RotatingWord";
 import TiltPhoto from "../TiltPhoto";
 
-// The hero is above the fold, so it renders immediately instead of waiting for the scroll reveal.
+// About section right after the intro (the intro opens the page with the big name).
+// It renders immediately instead of waiting for the scroll reveal.
 export default function Hero() {
   return (
-    <section className="hero" id="top">
+    <section className="hero" id="about">
       <HeroField />
       <div className="wrap">
         <div className="hero-grid">
@@ -16,13 +17,9 @@ export default function Hero() {
               <b>now</b>
               {profile.now}
             </p>
-            <h1>
-              {profile.name.first}{" "}
-              <span className="l2">
-                {profile.name.last}
-                <span className="dot">.</span>
-              </span>
-            </h1>
+            <h2 className="sec-title hero-title">
+              About <em>me</em>
+            </h2>
             <p className="rotator">
               {profile.headline} who builds
               <RotatingWord words={["mobile apps", "web apps", "3D for the browser", "things that get tested"]} />

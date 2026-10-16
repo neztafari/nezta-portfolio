@@ -50,6 +50,13 @@ export const profile = {
   },
 };
 
+// Steps of the scroll intro at the top of the homepage.
+export const introSteps = [
+  { title: "Mobile apps", tech: ["Flutter", "React Native"] },
+  { title: "Web apps", tech: ["Next.js", "React"] },
+  { title: "Browser 3D", tech: ["Unity", "WebGL"] },
+];
+
 export const facts = [
   { label: "GPA", value: "3.70", note: "out of 4.00 · UNDIP" },
   { label: "Internships", value: "2", note: "Garuda Indonesia, Telkomsel" },

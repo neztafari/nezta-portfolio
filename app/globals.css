@@ -551,6 +551,1007 @@ button {
   }
 }
 
+/* ---------- intro (pinned scroll) ----------
+   Intro.tsx writes scroll progress 0→1 to --p on the stage. Every phase below is a 0→1 ramp
+   derived from --p with clamp(), and only drives transform and opacity:
+   0.04–0.26 phone eases from a 3/4 tilt toward the viewer · 0.08–0.13 screen wakes (glow)
+   0.11–0.17 lock screen time/date · 0.18–0.26 lock screen slides up, app UI slides in
+   0.10–0.20 name fades out
+   0.22–0.56 step 01 (phone, mobile UI) · 0.47–0.55 phone turns away and fades
+   0.55–0.62 laptop scales/turns in (no overlap with the phone) · 0.57–0.70 lid opens to ~105°
+   0.56–0.82 step 02 (web dashboard in the browser) · 0.78–0.88 camera angle shifts
+   0.79–0.85 browser tab → 3D room · 0.82→ step 03 · 0.92–1 laptop scales down and fades. */
+
+.intro {
+  /* the stage slides up under the sticky nav (nav height + its top margin) */
+  --nav-space: 72px;
+  position: relative;
+  height: 200vh;
+  margin-top: calc(-1 * var(--nav-space));
+  overflow-x: clip;
+}
+
+.intro-stage {
+  --p: 0;
+  --ps: 1;
+  --ls: 0.82;
+  --turn: clamp(0, calc((var(--p) - 0.04) / 0.22), 1);
+  --wake: clamp(0, calc((var(--p) - 0.08) / 0.05), 1);
+  --lock: clamp(0, calc((var(--p) - 0.11) / 0.06), 1);
+  --unlock: clamp(0, calc((var(--p) - 0.18) / 0.08), 1);
+  --title: clamp(0, calc(1 - (var(--p) - 0.1) / 0.1), 1);
+  --s1: min(clamp(0, calc((var(--p) - 0.22) / 0.06), 1), clamp(0, calc((0.56 - var(--p)) / 0.06), 1));
+  --s2: min(clamp(0, calc((var(--p) - 0.56) / 0.06), 1), clamp(0, calc((0.82 - var(--p)) / 0.06), 1));
+  --s3: clamp(0, calc((var(--p) - 0.82) / 0.06), 1);
+  --pout: clamp(0, calc((var(--p) - 0.47) / 0.08), 1);
+  --lin: clamp(0, calc((var(--p) - 0.55) / 0.07), 1);
+  --lid: clamp(0, calc((var(--p) - 0.57) / 0.13), 1);
+  --cam: clamp(0, calc((var(--p) - 0.78) / 0.1), 1);
+  --room: clamp(0, calc((var(--p) - 0.79) / 0.06), 1);
+  --out: clamp(0, calc((var(--p) - 0.92) / 0.08), 1);
+  /* shared float (px offset factor): the device and its contact shadow use the same wave */
+  --float: sin(calc(var(--p) * 900deg));
+  position: sticky;
+  top: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: 24px;
+  height: 100svh;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding: calc(var(--nav-space) + 24px) 24px 84px;
+  isolation: isolate;
+}
+
+.intro-glow {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  z-index: -1;
+  width: min(62vw, 660px);
+  aspect-ratio: 1;
+  /* closest-side keeps both glows fully faded inside the box (no visible edges) */
+  background:
+    radial-gradient(circle closest-side at 50% 48%, rgba(76, 125, 255, 0.22), transparent),
+    radial-gradient(circle closest-side at 64% 68%, rgba(255, 66, 98, 0.14), transparent);
+  transform: translateY(-50%);
+  opacity: calc(1 - var(--out));
+  pointer-events: none;
+}
+
+/* text column: the name and the three steps share one cell and crossfade */
+.intro-copy {
+  display: grid;
+  align-items: center;
+}
+
+.intro-copy > * {
+  grid-area: 1 / 1;
+}
+
+.intro-title {
+  opacity: var(--title);
+  transform: translateY(calc((1 - var(--title)) * -24px));
+}
+
+.intro-name {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(36px, 5.6vw, 76px);
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+  color: var(--ink);
+}
+
+.intro-name .l2 {
+  display: block;
+  color: transparent;
+  -webkit-text-stroke: 1.6px var(--blue-hi);
+  transition: color 0.5s var(--ease);
+}
+
+.intro-name:hover .l2 {
+  color: var(--blue);
+}
+
+.intro-name .dot {
+  color: var(--red);
+  -webkit-text-stroke: 0;
+}
+
+.intro-role {
+  margin: 22px 0 0;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(17px, 2vw, 24px);
+  letter-spacing: -0.02em;
+  color: var(--muted);
+}
+
+.intro-step {
+  opacity: 0;
+}
+
+.intro-step.s1 {
+  opacity: var(--s1);
+  transform: translateY(calc((1 - var(--s1)) * 18px));
+}
+
+.intro-step.s2 {
+  opacity: var(--s2);
+  transform: translateY(calc((1 - var(--s2)) * 18px));
+}
+
+.intro-step.s3 {
+  opacity: calc(var(--s3) * (1 - var(--out)));
+  transform: translateY(calc((1 - var(--s3)) * 18px));
+}
+
+.intro-step-n {
+  display: block;
+  margin-bottom: 12px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--red);
+}
+
+.intro-step-title {
+  margin: 0 0 18px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(34px, 4.6vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+}
+
+/* devices: phone and laptop share one cell. Each wrapper fades; opacity on the 3D element
+   itself would flatten it (no back face, no depth sorting). */
+.intro-device {
+  display: grid;
+  height: 100%;
+}
+
+.dev {
+  position: relative;
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+  perspective: 1400px;
+}
+
+/* soft contact shadow (first child, so it paints under the device) that grows and
+   darkens as the device floats down */
+.dev-shadow {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + var(--sh-y));
+  width: var(--sh-w);
+  height: 28px;
+  margin: -14px 0 0 calc(var(--sh-w) / -2);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--shadow), transparent);
+  transform: scaleX(calc(1 + var(--float) * 0.1));
+  opacity: calc(0.7 + var(--float) * 0.15);
+  pointer-events: none;
+}
+
+/* ---- phone ---- */
+.dev-phone {
+  --w: 200px;
+  --h: 433px;
+  --d: 18px;
+  --r: 40px;
+  --metal: linear-gradient(160deg, #2c3038, #7a808d 18%, #c3c8d1 30%, #5d636f 46%, #9aa0ac 68%, #3a3e47);
+  --sh-y: calc(var(--h) * var(--ps) / 2 + 14px);
+  --sh-w: calc(var(--w) * var(--ps) * 0.95);
+  opacity: calc(1 - var(--pout));
+}
+
+.phone {
+  position: relative;
+  width: var(--w);
+  height: var(--h);
+  transform-style: preserve-3d;
+  will-change: transform;
+  transform:
+    translateY(calc(var(--float) * 7px))
+    scale(calc(var(--ps) * (1 - var(--pout) * 0.45)))
+    rotateX(calc(8deg - var(--turn) * 3deg))
+    rotateY(calc(-28deg + var(--turn) * 14deg + sin(calc(var(--p) * 720deg)) * 7deg - var(--pout) * 20deg));
+}
+
+/* both faces are a metal rail with glass inset by 3px; a specular band slides across the
+   rail as the phone turns (transform only) */
+.phone-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: var(--r);
+  background: var(--metal);
+  backface-visibility: hidden;
+}
+
+.phone-face::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -100%;
+  width: 300%;
+  background: linear-gradient(100deg, transparent 42%, rgba(255, 255, 255, 0.6) 49%, rgba(255, 255, 255, 0.15) 52%, transparent 58%);
+  transform: translateX(calc(-20% + var(--turn) * 18% + sin(calc(var(--p) * 720deg)) * 5%));
+  pointer-events: none;
+}
+
+.phone-front {
+  transform: translateZ(calc(var(--d) / 2));
+}
+
+/* stacked slices share the metal gradient so the edge reads as one band */
+.phone-slice {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r);
+  background: var(--metal);
+  transform: translateZ(calc((var(--k) / 6 - 0.5) * (var(--d) - 2px)));
+}
+
+.phone-btn {
+  position: absolute;
+  width: calc(var(--d) - 8px);
+  border-radius: 2px;
+  background: linear-gradient(180deg, #a3a9b5, #4a4f5a 50%, #949aa6);
+}
+
+.phone-btn.power {
+  top: 27%;
+  left: calc(100% - (var(--d) - 8px) / 2);
+  height: 64px;
+  transform: translateX(1.6px) rotateY(90deg);
+}
+
+.phone-btn.volume {
+  top: 20%;
+  left: calc((var(--d) - 8px) / -2);
+  height: 96px;
+  transform: translateX(-1.6px) rotateY(90deg);
+}
+
+/* front: thin even black bezels, pill camera, glass reflection over the UI */
+.phone-glass {
+  position: absolute;
+  inset: 3px;
+  padding: 5px;
+  border-radius: calc(var(--r) - 3px);
+  background: #030406;
+}
+
+.phone-screen {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: calc(var(--r) - 8px);
+  background: #020306;
+}
+
+/* lock screen: wallpaper glows in, then time/date; it slides up and fades as the app comes in */
+.scr-lock {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 58px;
+  color: #fff;
+  background:
+    radial-gradient(90% 60% at 30% 25%, color-mix(in srgb, var(--blue) 75%, transparent), transparent 70%),
+    radial-gradient(90% 60% at 75% 85%, color-mix(in srgb, var(--red) 65%, transparent), transparent 70%),
+    #0a0e1c;
+  opacity: calc(var(--wake) * (1 - var(--unlock)));
+  transform: translateY(calc(var(--unlock) * -30%));
+}
+
+.lock-time,
+.lock-date {
+  opacity: var(--lock);
+  transform: translateY(calc((1 - var(--lock)) * 8px));
+}
+
+.lock-time {
+  font-family: var(--sans);
+  font-size: 50px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.lock-date {
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  opacity: calc(var(--lock) * 0.85);
+}
+
+.lock-home {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 70px;
+  height: 4px;
+  margin-left: -35px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.75);
+  opacity: var(--lock);
+}
+
+/* screen off: glossy black glass with a soft diagonal reflection that slides with --p */
+.scr-off {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #020306;
+  opacity: calc(1 - var(--wake));
+}
+
+.scr-off::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 220%;
+  background: linear-gradient(118deg, transparent 32%, rgba(255, 255, 255, 0.1) 44%, rgba(255, 255, 255, 0.03) 50%, transparent 60%);
+  transform: translateX(calc(var(--p) * 120%));
+}
+
+.phone-pill {
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  width: 54px;
+  height: 15px;
+  margin-left: -27px;
+  border-radius: 99px;
+  background: #000;
+}
+
+.phone-pill::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  right: 9px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #3d4c8a, #06070c 60%);
+}
+
+.phone-glare {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    118deg,
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.03) 28%,
+    transparent 40%,
+    transparent 62%,
+    rgba(255, 255, 255, 0.05) 72%,
+    transparent 82%
+  );
+  pointer-events: none;
+}
+
+/* phone screen: portrait mobile UI */
+.scr-mobile {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 12px;
+  background: var(--bg2);
+  opacity: var(--unlock);
+  transform: translateY(calc((1 - var(--unlock)) * 30%));
+}
+
+.sm-status {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sm-status i {
+  width: 30px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line2);
+}
+
+.sm-status i + i {
+  width: 18px;
+}
+
+.sm-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sm-head i {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--red));
+}
+
+.sm-head span {
+  width: 70px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--muted);
+  opacity: 0.6;
+}
+
+.sm-hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  height: 72px;
+  padding: 12px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--blue), #7b5cff 55%, var(--red));
+  box-shadow: 0 10px 24px -10px rgba(76, 125, 255, 0.7);
+}
+
+.sm-hero span {
+  width: 60%;
+  height: 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.sm-hero span + span {
+  width: 38%;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.sm-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.sm-tiles i {
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface2);
+}
+
+.sm-tiles i:first-child {
+  border-color: rgba(76, 125, 255, 0.45);
+  background: var(--blue-soft);
+}
+
+.sm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sm-list div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.sm-list i {
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  background: var(--blue-soft);
+}
+
+.sm-list span {
+  width: 60%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line2);
+}
+
+.sm-nav {
+  display: flex;
+  justify-content: space-around;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.sm-nav i {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--line2);
+}
+
+.sm-nav i:first-child {
+  background: var(--blue);
+}
+
+/* ---- laptop ----
+   Model space: the hinge line is the origin, the base deck lies in y = 0 from z = 0 (back)
+   to z = --ld (front), the lid rotates about the hinge (rotateX). Every face (.lt-f) is
+   centered on the origin and placed with translate3d/rotate. */
+.dev-laptop {
+  --sh-y: calc(150px * var(--ls));
+  --sh-w: calc(500px * var(--ls));
+  opacity: calc(var(--lin) * (1 - var(--out)));
+}
+
+.laptop {
+  --lw: 440px;
+  --ld: 290px;
+  --lt: 12px;
+  --lh: 280px;
+  position: relative;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transform:
+    translateY(calc(var(--float) * 5px))
+    scale(calc(var(--ls) * (0.6 + 0.4 * var(--lin)) * (1 - var(--out) * 0.35)))
+    rotateX(calc(-20deg + var(--cam) * 7deg))
+    rotateY(calc(-26deg - (1 - var(--lin)) * 50deg + var(--cam) * 16deg))
+    translate3d(0, 105px, calc(var(--ld) / -2));
+}
+
+.lt-base,
+.lt-lid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-style: preserve-3d;
+}
+
+/* lid angle: ~8° (nearly closed) → 105° as step 02 begins */
+.lt-lid {
+  transform: rotateX(calc((8 + var(--lid) * 97) * 1deg - 90deg));
+}
+
+.lt-f {
+  position: absolute;
+  top: calc(var(--fh) / -2);
+  left: calc(var(--fw) / -2);
+  width: var(--fw);
+  height: var(--fh);
+}
+
+.lt-deck {
+  --fw: var(--lw);
+  --fh: var(--ld);
+  border-radius: 10px 10px 16px 16px;
+  background: linear-gradient(180deg, #2f3541, #252a34);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  transform: translate3d(0, 0, calc(var(--ld) / 2)) rotateX(90deg);
+}
+
+/* key plates: dark gaps drawn over the key color by a column and a row gradient */
+.lt-keys {
+  position: absolute;
+  top: 28px;
+  left: 30px;
+  right: 30px;
+  height: 44%;
+  border-radius: 6px;
+  background:
+    linear-gradient(90deg, transparent 0 86%, #14171e 86%) 0 0 / 7.69% 100%,
+    linear-gradient(0deg, transparent 0 80%, #14171e 80%) 0 0 / 100% 20%,
+    #333a48;
+  box-shadow: 0 0 0 4px #14171e;
+}
+
+.lt-pad {
+  position: absolute;
+  bottom: 22px;
+  left: 31%;
+  width: 38%;
+  height: 30%;
+  border-radius: 10px;
+  background: linear-gradient(#343b48, #2b313c);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+}
+
+.lt-front {
+  --fw: var(--lw);
+  --fh: var(--lt);
+  border-radius: 0 0 8px 8px;
+  background: linear-gradient(180deg, #555c6b, #1c2028);
+  transform: translate3d(0, calc(var(--lt) / 2), var(--ld));
+}
+
+.lt-side {
+  --fw: var(--ld);
+  --fh: var(--lt);
+  background: linear-gradient(90deg, #232831, #434a58);
+}
+
+.lt-side.l {
+  transform: translate3d(calc(var(--lw) / -2), calc(var(--lt) / 2), calc(var(--ld) / 2)) rotateY(90deg);
+}
+
+.lt-side.r {
+  transform: translate3d(calc(var(--lw) / 2), calc(var(--lt) / 2), calc(var(--ld) / 2)) rotateY(90deg);
+}
+
+.lt-screen,
+.lt-lid-back {
+  --fw: var(--lw);
+  --fh: var(--lh);
+  border-radius: 14px 14px 4px 4px;
+  backface-visibility: hidden;
+}
+
+.lt-screen {
+  padding: 10px 10px 16px;
+  background: #05070c;
+  box-shadow: inset 0 0 0 1.5px #3a4252;
+  transform: translate3d(0, calc(var(--lh) / -2), 3px);
+}
+
+.lt-lid-back {
+  background:
+    radial-gradient(80% 60% at 30% 20%, rgba(150, 170, 230, 0.16), transparent 60%),
+    linear-gradient(140deg, #3a4150, #232832 60%, #2b2a3a);
+  transform: translate3d(0, calc(var(--lh) / -2), -3px) rotateY(180deg);
+}
+
+.lt-lid-top {
+  --fw: var(--lw);
+  --fh: 6px;
+  border-radius: 3px;
+  background: #4a5161;
+  transform: translate3d(0, calc(var(--lh) * -1), 0) rotateX(90deg);
+}
+
+.lt-lid-side {
+  --fw: 6px;
+  --fh: var(--lh);
+  background: #3a4150;
+}
+
+.lt-lid-side.l {
+  transform: translate3d(calc(var(--lw) / -2), calc(var(--lh) / -2), 0) rotateY(90deg);
+}
+
+.lt-lid-side.r {
+  transform: translate3d(calc(var(--lw) / 2), calc(var(--lh) / -2), 0) rotateY(90deg);
+}
+
+/* browser window on the laptop screen */
+.br {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--bg2);
+}
+
+.br-tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 20px;
+  padding: 0 8px;
+  background: var(--surface2);
+}
+
+.br-tabs i {
+  width: 70px;
+  height: 14px;
+  border-radius: 6px 6px 0 0;
+  background: var(--line);
+}
+
+.br-tabs i:first-child {
+  background: var(--bg2);
+}
+
+.br-url {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.br-url i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--line2);
+}
+
+.br-url span {
+  flex: 1;
+  height: 12px;
+  border-radius: 99px;
+  background: var(--surface2);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.br-view {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.sw {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr);
+  background: var(--bg2);
+  opacity: calc(1 - var(--room));
+}
+
+.sw-side {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 9px;
+  border-right: 1px solid var(--line);
+}
+
+.sw-side i {
+  height: 7px;
+  border-radius: 4px;
+  background: var(--line2);
+}
+
+.sw-side i:first-child {
+  width: 80%;
+  background: var(--blue);
+}
+
+.sw-main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  padding: 10px;
+}
+
+.sw-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.sw-kpis span {
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface2);
+}
+
+.sw-kpis span:first-child {
+  border-color: rgba(255, 66, 98, 0.4);
+  background: var(--red-soft);
+}
+
+.sw-chart {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  gap: 6px;
+  min-height: 0;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.sw-chart i {
+  flex: 1;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(var(--blue), rgba(76, 125, 255, 0.3));
+}
+
+/* browser tab content for step 03: the tour room in one still pose, with an FPS HUD */
+.br-room {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #0b1020;
+  opacity: var(--room);
+  container-type: inline-size;
+}
+
+.br-fps {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(5, 8, 18, 0.6);
+  color: #9dffb8;
+  font-family: var(--mono);
+  font-size: 9px;
+}
+
+.tour-cam.still {
+  animation: none;
+  transform: translateZ(60cqi) rotateY(-12deg) translate3d(6cqi, 3cqi, -8cqi);
+}
+
+.tour-cam.still .tf {
+  animation: none;
+}
+
+/* bottom bar: progress, scroll hint, step and skip */
+.intro-bar {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  opacity: calc(1 - var(--out));
+}
+
+.intro-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.intro-progress span {
+  min-width: 4ch;
+  font-variant-numeric: tabular-nums;
+}
+
+.intro-progress i {
+  position: relative;
+  width: 120px;
+  height: 2px;
+  overflow: hidden;
+  background: var(--line2);
+}
+
+.intro-progress i::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--blue), var(--red));
+  transform: scaleX(var(--p));
+  transform-origin: left;
+}
+
+.intro-hint {
+  opacity: clamp(0, calc(1 - var(--p) * 12), 1);
+}
+
+.intro-end {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.intro-skip {
+  padding: 6px 12px;
+  border: 1px solid var(--line2);
+  border-radius: 999px;
+  background: var(--glass);
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 0.2s;
+}
+
+.intro-skip:hover {
+  border-color: var(--blue);
+}
+
+/* smaller devices on narrow or short screens */
+@media (max-width: 900px), (max-height: 760px) {
+  .intro-stage {
+    --ps: 0.82;
+    --ls: 0.7;
+  }
+}
+
+@media (max-height: 640px) {
+  .intro-stage {
+    --ps: 0.68;
+    --ls: 0.58;
+  }
+}
+
+@media (max-width: 600px) {
+  .intro {
+    height: 160vh;
+  }
+  .intro-stage {
+    --ps: 0.58;
+    --ls: 0.5;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: 8px;
+    padding: calc(var(--nav-space) + 20px) 16px 64px;
+  }
+  .intro-copy {
+    align-items: start;
+  }
+  .intro-bar {
+    left: 16px;
+    right: 16px;
+    bottom: 18px;
+  }
+  .intro-hint {
+    display: none;
+  }
+  .intro-progress i {
+    width: 48px;
+  }
+}
+
+/* reduced motion or no JS: a short static intro — phone facing front, name and step 01 */
+@media (prefers-reduced-motion: reduce), (scripting: none) {
+  .intro {
+    height: auto;
+  }
+  .intro-stage {
+    --turn: 1;
+    --wake: 1;
+    --lock: 1;
+    --unlock: 1;
+    --title: 1;
+    --s1: 1;
+    --s2: 0;
+    --s3: 0;
+    --pout: 0;
+    --lin: 0;
+    --lid: 0;
+    --cam: 0;
+    --room: 0;
+    --out: 0;
+    position: relative;
+    height: auto;
+    padding-bottom: 40px;
+  }
+  .intro-copy {
+    display: block;
+  }
+  .intro-step.s1 {
+    margin-top: 36px;
+  }
+  .intro-step.s2,
+  .intro-step.s3,
+  .intro-bar,
+  .dev-laptop {
+    display: none;
+  }
+  .intro-device {
+    padding-block: 24px 40px;
+  }
+}
+
 /* ---------- hero ---------- */
 
 .hero {
@@ -583,30 +1584,8 @@ button {
   }
 }
 
-.hero h1 {
-  margin: 28px 0 0;
-  font-family: var(--display);
-  font-weight: 800;
-  font-size: clamp(40px, 6.6vw, 86px);
-  line-height: 0.95;
-  letter-spacing: -0.055em;
-  color: var(--ink);
-}
-
-.hero h1 .l2 {
-  display: block;
-  color: transparent;
-  -webkit-text-stroke: 1.6px var(--blue-hi);
-  transition: color 0.5s var(--ease);
-}
-
-.hero h1:hover .l2 {
-  color: var(--blue);
-}
-
-.hero h1 .dot {
-  color: var(--red);
-  -webkit-text-stroke: 0;
+.hero-title {
+  margin-top: 24px;
 }
 
 .rotator {
