@@ -765,68 +765,6 @@ button {
   background: var(--red);
 }
 
-.orbit {
-  position: absolute;
-  z-index: 2;
-  padding: 8px 12px;
-  border: 1px solid var(--line2);
-  border-radius: 12px;
-  background: var(--glass);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--ink);
-  box-shadow: 0 16px 30px -16px rgba(0, 0, 0, 0.9);
-  animation: float 6s ease-in-out infinite;
-  white-space: nowrap;
-}
-
-.orbit b {
-  color: var(--blue-hi);
-  font-weight: 500;
-}
-
-.orbit.o1 {
-  top: 10%;
-  left: -12%;
-}
-.orbit.o2 {
-  top: 46%;
-  right: -10%;
-  animation-delay: -2s;
-}
-.orbit.o3 {
-  bottom: 14%;
-  left: -8%;
-  animation-delay: -4s;
-}
-.orbit.o2 b {
-  color: var(--red-hi);
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@media (max-width: 560px) {
-  .orbit.o1 {
-    left: -2%;
-  }
-  .orbit.o2 {
-    right: -2%;
-  }
-  .orbit.o3 {
-    left: 0;
-  }
-}
-
 /* facts */
 .facts {
   display: grid;

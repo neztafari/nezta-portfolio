@@ -41,15 +41,6 @@ export default function Hero() {
 
           <div className="photo-wrap" data-reveal style={{ "--d": "200ms" } as React.CSSProperties}>
             <TiltPhoto src="/nezta.jpg" alt={`${profile.name.first} ${profile.name.last}`} location={profile.location} />
-            <span className="orbit o1">
-              <b>Flutter</b> · e-AFL
-            </span>
-            <span className="orbit o2">
-              <b>Next.js</b> · DX Workspace
-            </span>
-            <span className="orbit o3">
-              <b>Unity</b> · WebGL
-            </span>
           </div>
         </div>
 
