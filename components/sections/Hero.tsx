@@ -4,6 +4,7 @@ import HeroField from "../HeroField";
 import RotatingWord from "../RotatingWord";
 import TiltPhoto from "../TiltPhoto";
 
+// The hero is above the fold, so it renders immediately instead of waiting for the scroll reveal.
 export default function Hero() {
   return (
     <section className="hero" id="top">
@@ -11,25 +12,25 @@ export default function Hero() {
       <div className="wrap">
         <div className="hero-grid">
           <div>
-            <p className="chip-now" data-reveal>
+            <p className="chip-now">
               <b>now</b>
               {profile.now}
             </p>
-            <h1 data-reveal style={{ "--d": "80ms" } as React.CSSProperties}>
+            <h1>
               {profile.name.first}{" "}
               <span className="l2">
                 {profile.name.last}
                 <span className="dot">.</span>
               </span>
             </h1>
-            <p className="rotator" data-reveal style={{ "--d": "160ms" } as React.CSSProperties}>
+            <p className="rotator">
               {profile.headline} who builds
               <RotatingWord words={["mobile apps", "web apps", "3D for the browser", "things that get tested"]} />
             </p>
-            <p className="lede" data-reveal style={{ "--d": "240ms" } as React.CSSProperties}>
+            <p className="lede">
               {profile.summary}
             </p>
-            <div className="cta" data-reveal style={{ "--d": "320ms" } as React.CSSProperties}>
+            <div className="cta">
               <a className="btn btn-primary" href="#projects">
                 See my work →
               </a>
@@ -39,7 +40,7 @@ export default function Hero() {
             </div>
           </div>
 
-          <div className="photo-wrap" data-reveal style={{ "--d": "200ms" } as React.CSSProperties}>
+          <div className="photo-wrap">
             <TiltPhoto src="/nezta.jpg" alt={`${profile.name.first} ${profile.name.last}`} location={profile.location} />
           </div>
         </div>

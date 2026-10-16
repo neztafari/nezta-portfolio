@@ -90,7 +90,7 @@ export default function Projects() {
           <ProjectCard project={tracker} delay={80} />
 
           <article className="card spot proj wide" data-reveal>
-            <div className="proj-preview tour-col">
+            <div className="proj-preview tour-col" data-loop>
               <TourViewport />
               <FpsChart />
             </div>

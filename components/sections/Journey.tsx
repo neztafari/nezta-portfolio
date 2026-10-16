@@ -49,7 +49,7 @@ export default function Journey() {
         </div>
 
         <div className="journey">
-          <div className="card graph" data-reveal>
+          <div className="card graph" data-reveal data-loop>
             <div className="graph-head">
               <span>git log --graph</span>
               <span>career</span>

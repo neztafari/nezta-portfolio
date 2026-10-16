@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import LiveFps from "./LiveFps";
 import ThemeToggle from "./ThemeToggle";
 
 const links = [
@@ -46,7 +45,6 @@ export default function Nav() {
             </a>
           ))}
         </div>
-        <LiveFps />
         <ThemeToggle />
         <button
           type="button"

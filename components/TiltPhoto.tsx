@@ -27,7 +27,17 @@ export default function TiltPhoto({ src, alt, location }: { src: string; alt: st
 
   return (
     <div ref={ref} className="photo-card" onPointerMove={onMove} onPointerLeave={onLeave}>
-      <Image src={src} alt={alt} width={700} height={875} loading="eager" fetchPriority="high" />
+      {/* the slot is min(100%, 380px) wide (.photo-wrap), so request a matching width */}
+      <Image
+        src={src}
+        alt={alt}
+        width={700}
+        height={875}
+        sizes="(max-width: 412px) calc(100vw - 32px), 380px"
+        loading="eager"
+        fetchPriority="high"
+      />
+
       <div className="photo-meta">
         <span>
           <i aria-hidden="true" />

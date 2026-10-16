@@ -198,16 +198,17 @@ export const education = [
   },
 ];
 
+// Software-engineering certifications first, then networking / security / IoT.
 export const certifications = [
-  { issuer: "2026", name: "TOEFL Prediction Test" },
-  { issuer: "Cisco · 2025", name: "Digital Safety and Security Awareness" },
-  { issuer: "Cisco · 2024", name: "CCNA: Introduction to Networks" },
-  { issuer: "Cisco · 2024", name: "CCNA: Switching, Routing, and Wireless Essentials" },
-  { issuer: "Cisco · 2024", name: "Cyber Threat Management" },
   { issuer: "Cisco · 2024", name: "JavaScript Essentials 1" },
   { issuer: "Cisco · 2024", name: "Python Essentials 1" },
   { issuer: "Oracle · 2024", name: "Database Design" },
   { issuer: "Oracle · 2024", name: "Database Foundations" },
+  { issuer: "2026", name: "TOEFL Prediction Test" },
+  { issuer: "Cisco · 2024", name: "CCNA: Introduction to Networks" },
+  { issuer: "Cisco · 2024", name: "CCNA: Switching, Routing, and Wireless Essentials" },
+  { issuer: "Cisco · 2024", name: "Cyber Threat Management" },
+  { issuer: "Cisco · 2025", name: "Digital Safety and Security Awareness" },
   { issuer: "Cisco · 2023", name: "IT Essentials" },
   { issuer: "Cisco · 2023", name: "Introduction to IoT" },
 ];

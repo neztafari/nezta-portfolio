@@ -20,6 +20,7 @@ export default function HeroField() {
     const mouse = { x: -9999, y: -9999 };
     let raf = 0;
     let visible = true;
+    let looping = true;
 
     const size = () => {
       const r = canvas.getBoundingClientRect();
@@ -64,7 +65,14 @@ export default function HeroField() {
         ctx.arc(px + ox, py + oy, rad, 0, Math.PI * 2);
         ctx.fill();
       }
-      if (!reduce && visible) raf = requestAnimationFrame(draw);
+      // keep going only while on screen and the tab is visible; reduced motion draws one frame
+      if (!reduce && visible && !document.hidden) raf = requestAnimationFrame(draw);
+      else looping = false;
+    };
+    const start = () => {
+      if (looping || reduce || !visible || document.hidden) return;
+      looping = true;
+      raf = requestAnimationFrame(draw);
     };
 
     const onMove = (e: PointerEvent) => {
@@ -77,11 +85,10 @@ export default function HeroField() {
       mouse.y = -9999;
     };
 
-    // stop drawing when the hero is off screen
+    // stop drawing when the hero is off screen or the tab is hidden, resume when back
     const io = new IntersectionObserver(([entry]) => {
-      const was = visible;
       visible = entry.isIntersecting;
-      if (visible && !was && !reduce) raf = requestAnimationFrame(draw);
+      start();
     });
     io.observe(canvas);
 
@@ -90,10 +97,12 @@ export default function HeroField() {
     window.addEventListener("resize", size);
     window.addEventListener("pointermove", onMove, { passive: true });
     document.addEventListener("pointerleave", onLeave);
+    document.addEventListener("visibilitychange", start);
 
     return () => {
       cancelAnimationFrame(raf);
       io.disconnect();
+      document.removeEventListener("visibilitychange", start);
       window.removeEventListener("resize", size);
       window.removeEventListener("pointermove", onMove);
       document.removeEventListener("pointerleave", onLeave);

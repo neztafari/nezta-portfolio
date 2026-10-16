@@ -15,7 +15,7 @@ export default function Skills() {
         </div>
       </div>
 
-      <div className="marquee" aria-hidden="true">
+      <div className="marquee" aria-hidden="true" data-loop>
         <div className="marquee-track">
           {[...all, ...all].map((s, i) => (
             <span key={i}>{s}</span>

@@ -86,18 +86,26 @@ export default function TourViewport() {
       value = Math.max(target - 3, Math.min(target + 3, value));
       setFps(Math.round(value));
     };
-    const start = () => {
-      if (!timer) timer = window.setInterval(tick, 280);
+    // run only while the viewport is on screen and the tab is visible
+    let onScreen = false;
+    const sync = () => {
+      if (onScreen && !document.hidden) {
+        if (!timer) timer = window.setInterval(tick, 280);
+      } else {
+        window.clearInterval(timer);
+        timer = 0;
+      }
     };
-    const stop = () => {
-      window.clearInterval(timer);
-      timer = 0;
-    };
-    const io = new IntersectionObserver(([e]) => (e.isIntersecting ? start() : stop()));
+    const io = new IntersectionObserver(([e]) => {
+      onScreen = e.isIntersecting;
+      sync();
+    });
     io.observe(view);
+    document.addEventListener("visibilitychange", sync);
     return () => {
-      stop();
+      window.clearInterval(timer);
       io.disconnect();
+      document.removeEventListener("visibilitychange", sync);
     };
   }, []);
 

@@ -13,7 +13,7 @@ export default function ProjectPreview({ project }: { project: Project }) {
   }
 
   return (
-    <div className="proj-preview" aria-hidden="true">
+    <div className="proj-preview" aria-hidden="true" data-loop>
       <span className="preview-label">{project.internal ? "INTERNAL PROJECT · ILLUSTRATION" : "ILLUSTRATION"}</span>
       {project.preview === "tablet" && <Tablet />}
       {project.preview === "dashboard" && <Dashboard />}
