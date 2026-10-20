@@ -2,7 +2,6 @@
 // the components only read from it.
 
 export type Experience = {
-  branch: string;
   role: string;
   company: string;
   period: string;
@@ -74,12 +73,11 @@ export const career = [
 
 export const experiences: Experience[] = [
   {
-    branch: "feat/garuda",
     role: "IT Intern – IT Development",
     company: "PT Garuda Indonesia (Persero) Tbk",
     period: "Aug 2026 — Present",
     location: "Tangerang",
-    type: "Government internship program",
+    type: "National Internship Program",
     program: "MagangHub Kemnaker",
     current: true,
     points: [
@@ -93,7 +91,6 @@ export const experiences: Experience[] = [
     tags: ["Flutter", "Dart", "Next.js", "React", "OpenSky API", "Manual Testing", "UAT"],
   },
   {
-    branch: "feat/virtual-tour",
     role: "Unity Developer",
     company: "CV Virtualign Inova Cipta",
     period: "Mar 2025 — Dec 2025",
@@ -107,7 +104,6 @@ export const experiences: Experience[] = [
     tags: ["Unity", "C#", "WebGL", "3D"],
   },
   {
-    branch: "feat/telkomsel-fe",
     role: "Front-End Developer Intern",
     company: "Telkomsel",
     period: "Jul 2024 — Sep 2024",

@@ -18,7 +18,6 @@ export default function Experience() {
           {experiences.map((job) => (
             <article key={job.company} className={`job${job.current ? " now" : ""}`} data-reveal>
               <div className="job-meta">
-                <span className="br">{job.branch}</span>
                 <span>{job.period}</span>
                 <span>{job.location}</span>
                 <span>{job.type}</span>
