@@ -1,10 +1,13 @@
 import { projects, thesis, type Project } from "@/data/profile";
+import DemoCard from "../DemoCard";
 import ProjectPreview from "../previews/ProjectPreview";
 import TourViewport from "../previews/TourViewport";
 
 function ProjectCard({ project, delay, wide }: { project: Project; delay: number; wide?: boolean }) {
-  return (
-    <article className={`card spot proj${wide ? " wide" : ""}`} data-reveal style={{ "--d": `${delay}ms` } as React.CSSProperties}>
+  const className = `card spot proj${wide ? " wide" : ""}`;
+  const style = { "--d": `${delay}ms` } as React.CSSProperties;
+  const content = (
+    <>
       <ProjectPreview project={project} />
       <div className="proj-body">
         <span className="proj-kind">{project.kind}</span>
@@ -18,6 +21,19 @@ function ProjectCard({ project, delay, wide }: { project: Project; delay: number
           ))}
         </div>
       </div>
+    </>
+  );
+  // cards with a live demo open it in a modal; the rest stay plain articles
+  if (project.demoUrl) {
+    return (
+      <DemoCard className={className} style={style} title={project.title} url={project.demoUrl}>
+        {content}
+      </DemoCard>
+    );
+  }
+  return (
+    <article className={className} data-reveal style={style}>
+      {content}
     </article>
   );
 }

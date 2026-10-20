@@ -5006,3 +5006,193 @@ a.c-item:hover {
     transition: none !important;
   }
 }
+
+/* ---------- live demo (DemoCard / DemoModal) ---------- */
+
+.has-demo {
+  cursor: pointer;
+}
+
+.has-demo:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+.demo-chip {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px;
+  border: 1px solid var(--line2);
+  border-radius: 999px;
+  background: var(--glass);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.demo-chip i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: demo-pulse 1.8s ease-out infinite;
+}
+
+@keyframes demo-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--red) 60%, transparent);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 7px transparent;
+  }
+}
+
+.demo-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(3, 5, 10, 0.72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: demo-fade 0.25s var(--ease);
+}
+
+.demo-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: min(90vh, 900px);
+  animation: demo-rise 0.35s var(--ease);
+}
+
+/* invisible focus-trap edges (DemoModal) */
+.demo-sentinel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.demo-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.demo-head span {
+  margin-right: auto;
+  font-weight: 500;
+}
+
+.demo-head a {
+  color: var(--blue-hi);
+}
+
+.demo-close {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--line2);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+/* phone frame: ~390x844, rounded bezel with the site glow */
+.demo-phone {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  aspect-ratio: 390 / 844;
+  padding: 10px;
+  border: 1px solid var(--line2);
+  border-radius: 44px;
+  background: #05070c;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 30px 80px -30px var(--shadow),
+    0 0 60px -10px var(--blue-soft);
+}
+
+.demo-phone iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 34px;
+  background: var(--bg2);
+}
+
+.demo-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+@keyframes demo-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes demo-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+
+/* small screens: full-screen sheet */
+@media (max-width: 639px) {
+  .demo-backdrop {
+    padding: 0;
+  }
+  .demo-dialog {
+    width: 100%;
+    height: 100%;
+    gap: 0;
+    background: var(--bg);
+  }
+  .demo-head {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .demo-phone {
+    aspect-ratio: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .demo-phone iframe {
+    border-radius: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-backdrop,
+  .demo-dialog,
+  .demo-chip i {
+    animation: none;
+  }
+}

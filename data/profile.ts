@@ -22,6 +22,8 @@ export type Project = {
   preview: "tablet" | "dashboard" | "radar" | "phone-quota" | "phone-music";
   // Put a screenshot in /public/projects and set its path here, e.g. "/projects/dx-workspace.png"
   image?: string;
+  // Live demo opened in a phone-frame modal when the card is clicked.
+  demoUrl?: string;
   internal?: boolean;
 };
 
@@ -157,6 +159,7 @@ export const projects: Project[] = [
   {
     kind: "2024 · Mobile Device Programming course",
     title: "ComBeats Music Application",
+    demoUrl: "https://combeats-neztanez.netlify.app",
     preview: "phone-music",
     description:
       "Music app where users browse tracks and play short previews, built for the Mobile Device Programming practicum.",
