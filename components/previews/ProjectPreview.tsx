@@ -192,11 +192,13 @@ function Dashboard() {
 // map UI chrome, and planes flying curved routes over the islands.
 function Radar() {
   const planes = [
-    { path: "M110 150 Q200 110 300 140", dur: "9s" },
-    { path: "M140 210 Q230 170 340 200", dur: "12s" },
-    { path: "M370 130 Q280 160 180 130", dur: "10s" },
-    { path: "M200 118 Q245 160 262 218", dur: "14s" },
-    { path: "M335 214 Q260 186 150 196", dur: "8s" },
+    // Parallel lanes 22 units apart, alternating direction: the durations differ, so routes that
+    // crossed would eventually put two planes on the same spot. Min gap over the full cycle ≈ 21.9.
+    { path: "M110 128 Q235 112 360 128", dur: "9s" },
+    { path: "M360 150 Q235 134 110 150", dur: "12s" },
+    { path: "M120 172 Q240 156 350 172", dur: "10s" },
+    { path: "M350 194 Q240 178 130 194", dur: "14s" },
+    { path: "M140 216 Q240 200 340 216", dur: "8s" },
   ];
   return (
     <div className="pv-radar">
