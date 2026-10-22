@@ -86,11 +86,11 @@ export const experiences: Experience[] = [
       "Develop and maintain the Flutter-based e-AFL tablet app used by flight crews to record flight, takeoff, landing, and fuel data.",
       "Implemented a dark mode theme aligned with Garuda Indonesia's design standards while preserving existing light mode behavior.",
       "Traced data submission failures from UI to API payload, including empty date/time field validation and signature export issues.",
-      "Built an internal proof-of-concept web-based flight tracker showing real-time positions of Garuda Indonesia aircraft, using the OpenSky Network API and internal ACARS data.",
+      "Built an internal proof-of-concept flight tracker: a Node.js + Express backend that reads aircraft positions from an internal MariaDB database with a one-minute in-memory cache, plus a React + MapLibre map frontend.",
       "Developed DX Workspace, an internal web application built with Next.js, including a new User Acceptance Testing (UAT) feature and a redesigned UI.",
       "Performed manual testing of payment flows on Garuda Indonesia's flight ticket booking website.",
     ],
-    tags: ["Flutter", "Dart", "Next.js", "React", "OpenSky API", "Manual Testing", "UAT"],
+    tags: ["Flutter", "Dart", "Next.js", "React", "Node.js", "Express", "Manual Testing", "UAT"],
   },
   {
     role: "Unity Developer",
@@ -145,8 +145,8 @@ export const projects: Project[] = [
     preview: "radar",
     internal: true,
     description:
-      "Internal web-based proof of concept showing real-time positions of Garuda Indonesia aircraft, using the OpenSky Network API and internal ACARS data.",
-    tags: ["Web", "OpenSky API", "ACARS", "Real-time"],
+      "Internal proof of concept that shows Garuda Indonesia aircraft on a live map. A Node.js + Express backend reads aircraft positions from an internal MariaDB database, caches them in memory and refreshes every minute, then serves them to a React + MapLibre frontend. An OpenSky Network data source is still available as an option.",
+    tags: ["Node.js", "Express", "MariaDB", "React", "MapLibre", "OpenSky API"],
   },
   {
     kind: "2024 · Telkomsel internship",
@@ -185,10 +185,10 @@ export const thesis = {
 
 export const skills = [
   { group: "Mobile & frontend", items: ["Flutter", "Dart", "React Native", "JavaScript", "TypeScript", "HTML & CSS"] },
-  { group: "Web", items: ["Next.js", "React", "REST API Integration"] },
+  { group: "Web", items: ["Next.js", "React", "Node.js", "Express", "REST API Integration"] },
   { group: "3D & graphics", items: ["Unity", "C#", "WebGL", "Performance Testing"] },
   { group: "Quality & process", items: ["Manual Testing", "UAT", "Debugging", "SDLC", "Agile Scrum"] },
-  { group: "Data & tools", items: ["SQL", "Git", "VS Code", "Android Emulator"] },
+  { group: "Data & tools", items: ["SQL", "MariaDB", "Git", "VS Code", "Android Emulator"] },
 ];
 
 export const education = [
