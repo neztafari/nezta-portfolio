@@ -410,7 +410,7 @@ button {
   background: linear-gradient(180deg, var(--surface2), var(--surface));
 }
 
-/* spotlight that follows the pointer (set by Effects.tsx) */
+/* spotlight that follows the pointer (set by Effects.tsx); only for a fine hovering pointer without reduced motion */
 .spot {
   --mx: 50%;
   --my: 50%;
@@ -424,7 +424,8 @@ button {
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: radial-gradient(380px circle at var(--mx) var(--my), rgba(0, 77, 152, 0.13), transparent 60%);
+  pointer-events: none;
+  background: radial-gradient(380px circle at var(--mx) var(--my), color-mix(in srgb, var(--blue-hi) 14%, transparent), transparent 60%);
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -444,9 +445,11 @@ button {
   transition: opacity 0.3s;
 }
 
-.spot:hover::before,
-.spot:hover::after {
-  opacity: 1;
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .spot:hover::before,
+  .spot:hover::after {
+    opacity: 1;
+  }
 }
 
 .btn {

@@ -30,10 +30,17 @@ const geistMono = localFont({
   variable: "--font-mono",
 });
 
+const title = "Nezta Misgi Febyandanu · Software Engineer";
+const description =
+  "Portfolio of Nezta Misgi Febyandanu, a software engineer building mobile, web and Unity WebGL applications.";
+
+// The preview image comes from app/opengraph-image.tsx; Next adds it to openGraph and twitter.
 export const metadata: Metadata = {
-  title: "Nezta Misgi Febyandanu · Software Engineer",
-  description:
-    "Portfolio of Nezta Misgi Febyandanu, a software engineer building mobile, web and Unity WebGL applications.",
+  metadataBase: new URL("https://neztanez.netlify.app"),
+  title,
+  description,
+  openGraph: { type: "website", url: "/", siteName: "Nezta Misgi Febyandanu", title, description },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

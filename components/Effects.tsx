@@ -39,13 +39,23 @@ export default function Effects() {
     );
     document.querySelectorAll("[data-loop]").forEach((el) => loops.observe(el));
 
-    // spotlight
+    // spotlight: one delegated listener, coordinates written once per frame, only for a fine hovering pointer
+    const spotOn = window.matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
+    let spotFrame = 0;
+    let spot: { card: HTMLElement; x: number; y: number } | null = null;
     const onPointer = (ev: PointerEvent) => {
+      if (!spotOn.matches) return;
       const card = (ev.target as HTMLElement | null)?.closest<HTMLElement>(".spot");
       if (!card) return;
-      const r = card.getBoundingClientRect();
-      card.style.setProperty("--mx", `${ev.clientX - r.left}px`);
-      card.style.setProperty("--my", `${ev.clientY - r.top}px`);
+      spot = { card, x: ev.clientX, y: ev.clientY };
+      if (spotFrame) return;
+      spotFrame = requestAnimationFrame(() => {
+        spotFrame = 0;
+        if (!spot) return;
+        const r = spot.card.getBoundingClientRect();
+        spot.card.style.setProperty("--mx", `${spot.x - r.left}px`);
+        spot.card.style.setProperty("--my", `${spot.y - r.top}px`);
+      });
     };
     document.addEventListener("pointermove", onPointer, { passive: true });
 
@@ -66,6 +76,7 @@ export default function Effects() {
       io.disconnect();
       loops.disconnect();
       document.removeEventListener("pointermove", onPointer);
+      cancelAnimationFrame(spotFrame);
       window.removeEventListener("scroll", onScroll);
       cancelAnimationFrame(frame);
     };
