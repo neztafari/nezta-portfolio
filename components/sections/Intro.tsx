@@ -7,9 +7,14 @@ import TourRoom from "../previews/TourRoom";
 // Pinned scroll intro. Step 01 shows a CSS 3D phone whose screen wakes (lock screen → mobile UI); it then turns
 // away and hands over to a CSS 3D laptop whose lid opens for step 02 (web dashboard in a browser)
 // and whose browser tab switches to the 3D room for step 03.
-// JS only measures scroll progress (0→1) and writes it to --p on the stage; every motion is
-// derived from --p in CSS (transform/opacity). The listener runs only while the section is
-// near the viewport. With reduced motion (or no JS) the intro is a short static block.
+// JS measures the target scroll progress (0→1) and eases the value it writes to --p on the stage
+// toward it (time-based, speed-capped, so a fast scroll still plays the whole intro); every motion
+// is derived from --p in CSS (transform/opacity). The listeners and the frame loop run only while
+// the section is near the viewport. With reduced motion (or no JS) the intro is a short static block.
+
+const EASE_TAU = 0.25; // s: time constant of the exponential catch-up
+const MAX_SPEED = 1 / 2.5; // progress per second: the full intro takes at least 2.5 s
+const SNAP_MS = 1500; // fallback end of an in-page jump when `scrollend` is unsupported
 
 const stepAt = (p: number) => (p < 0.55 ? 1 : p < 0.8 ? 2 : 3);
 const dateFormat = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long" });
@@ -27,28 +32,71 @@ export default function Intro() {
     const stage = stageRef.current;
     if (!section || !stage || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    let target = 0; // progress the scroll position asks for
+    let current = 0; // progress shown (written to --p), eased toward target
     let raf = 0;
+    let last = 0;
+    let snapping = false; // in-page jump in flight: follow scroll with no catch-up
+    let snapTimer = 0;
     let lastPct = -1;
     let lastStep = 0;
-    const update = () => {
-      raf = 0;
+    const readTarget = () => {
       const total = section.offsetHeight - window.innerHeight;
-      const p = total > 0 ? Math.min(1, Math.max(0, -section.getBoundingClientRect().top / total)) : 0;
-      stage.style.setProperty("--p", p.toFixed(4));
-      const pct = Math.round(p * 100);
+      return total > 0 ? Math.min(1, Math.max(0, -section.getBoundingClientRect().top / total)) : 0;
+    };
+    const paint = () => {
+      stage.style.setProperty("--p", current.toFixed(4));
+      const pct = Math.round(current * 100);
       if (pct !== lastPct && pctRef.current) {
         lastPct = pct;
         pctRef.current.textContent = `${String(pct).padStart(2, "0")}%`;
       }
-      const step = stepAt(p);
+      const step = stepAt(current);
       if (step !== lastStep && stepRef.current) {
         lastStep = step;
         stepRef.current.textContent = `0${step} / 0${introSteps.length}`;
       }
     };
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
+    const frame = (now: number) => {
+      const dt = Math.min(Math.max((now - last) / 1000, 0), 0.1);
+      last = now;
+      const eased = (target - current) * (1 - Math.exp(-dt / EASE_TAU));
+      const cap = MAX_SPEED * dt;
+      current += Math.abs(eased) > cap ? Math.sign(eased) * cap : eased;
+      if (Math.abs(target - current) < 0.0005) current = target;
+      paint();
+      raf = current === target ? 0 : requestAnimationFrame(frame);
     };
+    const jump = () => {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      target = current = readTarget();
+      paint();
+    };
+    const onScroll = () => {
+      target = readTarget();
+      if (snapping) {
+        current = target;
+        paint();
+      } else if (!raf && current !== target) {
+        last = performance.now();
+        raf = requestAnimationFrame(frame);
+      }
+    };
+
+    // In-page links (nav, "Skip intro") scroll smoothly through the intro: follow that scroll directly.
+    const endSnap = () => {
+      window.clearTimeout(snapTimer);
+      snapping = false;
+    };
+    const onClick = (e: MouseEvent) => {
+      if (!(e.target instanceof Element) || !e.target.closest('a[href^="#"]')) return;
+      endSnap();
+      snapping = true;
+      snapTimer = window.setTimeout(endSnap, SNAP_MS);
+    };
+    document.addEventListener("click", onClick);
+    window.addEventListener("scrollend", endSnap);
 
     // lock screen clock: visitor's local time/date, written straight to the two spans.
     // One timeout re-armed at each new minute, only while the intro is near and the tab visible.
@@ -74,10 +122,10 @@ export default function Intro() {
     const listen = (on: boolean) => {
       if (on === listening) return;
       listening = on;
+      jump(); // off-screen changes are never animated: start from, or settle on, the real position
       if (on) {
         window.addEventListener("scroll", onScroll, { passive: true });
         window.addEventListener("resize", onScroll);
-        onScroll();
       } else {
         window.removeEventListener("scroll", onScroll);
         window.removeEventListener("resize", onScroll);
@@ -93,6 +141,9 @@ export default function Intro() {
       listen(false);
       stopClock();
       document.removeEventListener("visibilitychange", syncClock);
+      document.removeEventListener("click", onClick);
+      window.removeEventListener("scrollend", endSnap);
+      window.clearTimeout(snapTimer);
       cancelAnimationFrame(raf);
     };
   }, []);

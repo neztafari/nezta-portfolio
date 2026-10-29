@@ -567,7 +567,7 @@ button {
   /* the stage slides up under the sticky nav (nav height + its top margin) */
   --nav-space: 72px;
   position: relative;
-  height: 200vh;
+  height: 240vh;
   margin-top: calc(-1 * var(--nav-space));
   overflow-x: clip;
 }
@@ -1485,7 +1485,7 @@ button {
 
 @media (max-width: 600px) {
   .intro {
-    height: 160vh;
+    height: 184vh;
   }
   .intro-stage {
     --ps: 0.58;
