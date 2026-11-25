@@ -113,10 +113,10 @@ export const experiences: Experience[] = [
       "Implemented a dark mode theme aligned with Garuda Indonesia's design standards while preserving existing light mode behavior.",
       "Traced data submission failures from UI to API payload, including empty date/time field validation and signature export issues.",
       "Built an internal proof-of-concept flight tracker: a Node.js + Express backend that reads aircraft positions from an internal MariaDB database with a one-minute in-memory cache, plus a React + MapLibre map frontend.",
-      "Redesigned the interface of DX Workspace, an internal web application built with Next.js, adding dark mode and English/Indonesian language support, and built its User Acceptance Testing (UAT) module.",
+      "Redesigned every module of DX Workspace, an internal Next.js platform, and migrated it to Runway, Garuda Indonesia's design system, with dark mode and English/Indonesian support. Built its User Acceptance Testing (UAT) module end to end and automated Word document generation from official templates.",
       "Performed manual testing of payment flows on Garuda Indonesia's flight ticket booking website.",
     ],
-    tags: ["Flutter", "Dart", "Next.js", "React", "Node.js", "Express", "Manual Testing", "UAT"],
+    tags: ["Flutter", "Dart", "Next.js", "React", "PostgreSQL", "Node.js", "Express", "Manual Testing", "UAT"],
   },
   {
     role: "Unity Developer",
@@ -162,8 +162,8 @@ export const projects: Project[] = [
     preview: "dashboard",
     internal: true,
     description:
-      "Internal web application built with Next.js. I redesigned the whole interface with a consistent design across modules, a collapsible sidebar, light and dark themes, and English/Indonesian language switching, and built the UAT module for tracking test scenarios, results, and final sign-off.",
-    tags: ["Next.js", "React", "UI Redesign", "Dark Mode", "i18n", "UAT"],
+      "Internal platform for Garuda Indonesia's IT division to manage business requirements, service requests, approvals, projects, and UAT, now in production. I redesigned every module and migrated the app to Runway, Garuda's design system, with light and dark themes and English/Indonesian switching. I built the UAT module end to end and automated Word document generation, so signatures, document numbers, dates, and attachments fill the official templates.",
+    tags: ["Next.js", "Tailwind", "PostgreSQL", "Design System", "Dark Mode", "i18n", "UAT", "Document Automation"],
   },
   {
     kind: "2026 · Garuda Indonesia internship · proof of concept",
