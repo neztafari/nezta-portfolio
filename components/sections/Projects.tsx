@@ -1,4 +1,6 @@
-import { projects, thesis, type Project } from "@/data/profile";
+import { apmSlots, caseStudies, projects, thesis, type Project } from "@/data/profile";
+import ApmCaseStudy from "../casestudy/ApmVisuals";
+import MilesCaseStudy from "../casestudy/MilesVisuals";
 import DemoCard from "../DemoCard";
 import ProjectPreview from "../previews/ProjectPreview";
 import TourViewport from "../previews/TourViewport";
@@ -86,6 +88,7 @@ function FpsChart() {
 
 export default function Projects() {
   const [eafl, dx, tracker, ...rest] = projects;
+  const [apm, miles] = caseStudies;
   return (
     <section className="section" id="projects">
       <div className="wrap">
@@ -104,6 +107,9 @@ export default function Projects() {
 
           <ProjectCard project={dx} delay={0} />
           <ProjectCard project={tracker} delay={80} />
+
+          <ApmCaseStudy cs={apm} slots={apmSlots} delay={0} />
+          <MilesCaseStudy cs={miles} delay={0} />
 
           <article className="card spot proj wide" data-reveal>
             <div className="proj-preview tour-col" data-loop>

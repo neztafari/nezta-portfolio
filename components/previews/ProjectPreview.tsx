@@ -123,67 +123,107 @@ function TabletScreen({ dark }: { dark?: boolean }) {
   );
 }
 
+// Abstract DX Workspace layout: sidebar, header and a module grid, drawn with
+// shapes only (no text or data). A 12s CSS loop: modules load in, the active menu row and the
+// highlighted module hop together, the theme and language buttons get tapped (labels reflow),
+// and the notification dot pulses. Like the other illustrations it is switched off by
+// prefers-reduced-motion, which leaves the first row and two tiles highlighted.
+const dxMenu = [
+  { w: 34 },
+  { w: 28 },
+  { w: 38 },
+  { w: 30, group: true },
+  { w: 24, child: true },
+  { w: 30, child: true },
+  { w: 36 },
+  { w: 26 },
+];
+
 function Dashboard() {
   return (
-    <div className="pv-browser">
-      <div className="pv-bar">
-        <i />
-        <i />
-        <i />
-        <span />
-      </div>
-      <div className="pv-admin">
-        <div className="pv-a-side">
-          <div className="pv-a-brand">
-            <i />
-            <span />
-          </div>
-          {Array.from({ length: 6 }, (_, i) => (
-            <div key={i} className={`pv-a-nav${i === 3 ? " on" : ""}`}>
-              <i />
-              <span />
-            </div>
-          ))}
-        </div>
-        <div className="pv-a-main">
-          <span className="pv-a-crumb" />
-          <div className="pv-a-hero">
-            <div>
-              <b>UAT</b>
-              <span />
-            </div>
-            <span className="pv-a-new">Create New</span>
-          </div>
-          <div className="pv-a-filters">
-            <span />
-            <span />
-          </div>
-          <div className="pv-a-docs">
-            {Array.from({ length: 3 }, (_, i) => (
-              <div key={i} className="pv-a-doc">
-                <div className="pv-a-doc-top">
-                  <span />
-                  <em>DRAFT</em>
-                </div>
-                <span className="pv-a-title" />
-                <div className="pv-a-progress">
-                  {i === 0 && (
-                    <b>
-                      <i />
-                      <i />
-                    </b>
-                  )}
-                </div>
-                <div className="pv-a-foot">
-                  <i />
-                  <span />
-                  <span />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+    <div className="pv-dx">
+      <svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <clipPath id="dxClip">
+            <rect x="16" y="40" width="368" height="196" rx="12" />
+          </clipPath>
+        </defs>
+        <rect className="dx-frame" x="16" y="40" width="368" height="196" rx="12" />
+
+        {/* sidebar */}
+        <g clipPath="url(#dxClip)">
+          <rect className="dx-side" x="16" y="40" width="81" height="196" />
+        </g>
+        <rect className="dx-acc" x="24" y="49" width="11" height="11" rx="3.5" />
+        <rect className="dx-bar mid" x="40" y="52.75" width="30" height="3.5" rx="1.75" />
+        {dxMenu.map((m, i) => {
+          const y = 72 + i * 16;
+          const x = m.child ? 8 : 0;
+          return (
+            <g key={i}>
+              <rect className="dx-ico" x={28 + x} y={y + 2.5} width="7" height="7" rx="2" />
+              <rect className="dx-bar" x={40 + x} y={y + 4.25} width={m.w} height="3.5" rx="1.75" />
+              {m.group && <path className="dx-chev" d={`M80 ${y + 4.5} L82.5 ${y + 7.5} L85 ${y + 4.5}`} />}
+              {i < 3 && (
+                <g className={`dx-row r${i}`}>
+                  <rect className="dx-on" x="22" y={y} width="69" height="12" rx="4" />
+                  <rect className="dx-acc" x="16" y={y + 2} width="2.5" height="8" rx="1.25" />
+                  <rect className="dx-acc" x="28" y={y + 2.5} width="7" height="7" rx="2" />
+                  <rect className="dx-bar hi" x="40" y={y + 4.25} width={m.w} height="3.5" rx="1.75" />
+                </g>
+              )}
+            </g>
+          );
+        })}
+        <path className="dx-line" d="M97 40 V236" />
+
+        {/* header */}
+        <rect className="dx-bar" x="109" y="49" width="28" height="4" rx="2" />
+        <rect className="dx-bar mid" x="143" y="49" width="38" height="4" rx="2" />
+        <rect className="dx-btn" x="310" y="44" width="16" height="14" rx="5" />
+        <path className="dx-moon" d="M319.8 47.88 A3.6 3.6 0 1 0 320.76 53.31 A3 3 0 0 1 319.8 47.88Z" />
+        <circle className="dx-tap t1" cx="318" cy="51" r="7" />
+        <rect className="dx-btn" x="331" y="44" width="26" height="14" rx="7" />
+        <rect className="dx-bar lga" x="337" y="49.5" width="7" height="3" rx="1.5" />
+        <rect className="dx-bar lgb" x="346" y="49.5" width="5" height="3" rx="1.5" />
+        <circle className="dx-tap t2" cx="344" cy="51" r="9" />
+        <circle className="dx-ping" cx="366" cy="51" r="3" />
+        <circle className="dx-dot" cx="366" cy="51" r="3" />
+        <path className="dx-line" d="M97 62 H384" />
+
+        {/* greeting and banner */}
+        <rect className="dx-bar hi" x="109" y="71" width="96" height="7" rx="3.5" />
+        <rect className="dx-bar" x="109" y="83" width="64" height="4" rx="2" />
+        <rect className="dx-banner" x="109" y="95" width="263" height="34" rx="8" />
+        <circle className="dx-acc" cx="127" cy="112" r="9" />
+        <rect className="dx-bar hi" x="143" y="104" width="78" height="5" rx="2.5" />
+        <rect className="dx-bar" x="143" y="114" width="52" height="3.5" rx="1.75" />
+        <rect className="dx-acc" x="322" y="104" width="40" height="16" rx="8" />
+        <rect className="dx-bar pill" x="332" y="110.25" width="20" height="3.5" rx="1.75" />
+        <circle className="dx-tap t3" cx="342" cy="112" r="11" />
+
+        {/* module tiles, 4 x 2. Tiles 2, 5 and 1 take turns being highlighted, in step with menu rows 0-2 */}
+        {Array.from({ length: 8 }, (_, i) => {
+          const x = 109 + (i % 4) * 67.5;
+          const y = 139 + Math.floor(i / 4) * 48;
+          const hop = [2, 5, 1].indexOf(i);
+          return (
+            <g key={i} className="dx-t" style={{ animationDelay: `${(-(12 - i * 0.12)).toFixed(2)}s` }}>
+              <rect className="dx-tile" x={x} y={y} width="59.5" height="40" rx="7" />
+              <rect className="dx-ico" x={x + 7} y={y + 8} width="10" height="10" rx="3" />
+              <rect className="dx-bar mid dx-lbl" x={x + 7} y={y + 25} width="38" height="4" rx="2" />
+              <rect className="dx-bar" x={x + 7} y={y + 32} width="24" height="3" rx="1.5" />
+              {hop >= 0 && (
+                <g className={`dx-hlt h${hop}`}>
+                  <rect className="dx-tile hl" x={x} y={y} width="59.5" height="40" rx="7" />
+                  <rect className="dx-acc" x={x + 7} y={y + 8} width="10" height="10" rx="3" />
+                  <rect className="dx-bar hi dx-lbl" x={x + 7} y={y + 25} width="38" height="4" rx="2" />
+                </g>
+              )}
+            </g>
+          );
+        })}
+      </svg>
     </div>
   );
 }
@@ -205,14 +245,14 @@ function Radar() {
       <svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice">
         <defs>
           <radialGradient id="trkGlobe" cx="0.45" cy="0.35" r="0.65">
-            <stop offset="0" stopColor="#1f3270" />
-            <stop offset="1" stopColor="#15204a" />
+            <stop offset="0" stopColor="#002561" />
+            <stop offset="1" stopColor="#011134" />
           </radialGradient>
           <clipPath id="trkClip">
             <circle cx="230" cy="190" r="170" />
           </clipPath>
         </defs>
-        <rect width="400" height="250" fill="#0b1222" />
+        <rect width="400" height="250" fill="#101218" />
         <circle cx="230" cy="190" r="170" fill="url(#trkGlobe)" />
         <ellipse className="grat" cx="230" cy="190" rx="170" ry="60" />
         <ellipse className="grat" cx="230" cy="190" rx="60" ry="170" />
@@ -243,7 +283,7 @@ function Radar() {
 
         {/* status pill */}
         <rect className="panel" x="10" y="222" width="66" height="16" rx="8" />
-        <circle cx="19" cy="230" r="3" fill="#37b24d" />
+        <circle cx="19" cy="230" r="3" fill="#52bdcc" />
         <rect className="skel" x="27" y="228" width="40" height="4" rx="2" />
 
         {/* zoom controls */}

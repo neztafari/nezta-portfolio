@@ -34,6 +34,32 @@ export type FpsRow = {
   values: [number, number, number];
 };
 
+export type CaseStudySection = {
+  title: string;
+  text?: string;
+  points?: string[];
+};
+
+export type CaseStudy = {
+  id: "apm" | "miles";
+  kind: string;
+  title: string;
+  subtitle?: string;
+  status: string;
+  summary: string;
+  tags: string[];
+  // short label/value pairs shown under the summary
+  facts: { label: string; value: string }[];
+  sections: Record<string, CaseStudySection>;
+};
+
+export type ImageSlot = {
+  title: string;
+  show: string;
+  // Path of an image or GIF in /public/projects. Keep it free of real data.
+  image?: string;
+};
+
 export const profile = {
   name: { first: "Nezta Misgi", last: "Febyandanu" },
   headline: "Software Engineer",
@@ -87,7 +113,7 @@ export const experiences: Experience[] = [
       "Implemented a dark mode theme aligned with Garuda Indonesia's design standards while preserving existing light mode behavior.",
       "Traced data submission failures from UI to API payload, including empty date/time field validation and signature export issues.",
       "Built an internal proof-of-concept flight tracker: a Node.js + Express backend that reads aircraft positions from an internal MariaDB database with a one-minute in-memory cache, plus a React + MapLibre map frontend.",
-      "Developed DX Workspace, an internal web application built with Next.js, including a new User Acceptance Testing (UAT) feature and a redesigned UI.",
+      "Redesigned the interface of DX Workspace, an internal web application built with Next.js, adding dark mode and English/Indonesian language support, and built its User Acceptance Testing (UAT) module.",
       "Performed manual testing of payment flows on Garuda Indonesia's flight ticket booking website.",
     ],
     tags: ["Flutter", "Dart", "Next.js", "React", "Node.js", "Express", "Manual Testing", "UAT"],
@@ -136,8 +162,8 @@ export const projects: Project[] = [
     preview: "dashboard",
     internal: true,
     description:
-      "Internal web application built with Next.js. Added a User Acceptance Testing (UAT) feature and redesigned the user interface.",
-    tags: ["Next.js", "React", "UI Redesign"],
+      "Internal web application built with Next.js. I redesigned the whole interface with a consistent design across modules, a collapsible sidebar, light and dark themes, and English/Indonesian language switching, and built the UAT module for tracking test scenarios, results, and final sign-off.",
+    tags: ["Next.js", "React", "UI Redesign", "Dark Mode", "i18n", "UAT"],
   },
   {
     kind: "2026 · Garuda Indonesia internship · proof of concept",
@@ -165,6 +191,144 @@ export const projects: Project[] = [
       "Music app where users browse tracks and play short previews, built for the Mobile Device Programming practicum.",
     tags: ["React Native", "TypeScript", "Audio Preview"],
   },
+];
+
+// Case studies for work at the airline. Public-safe on purpose: no internal system names, URLs,
+// IP addresses, login details, colleague names, real registrations, or real figures.
+export const caseStudies: CaseStudy[] = [
+  {
+    id: "apm",
+    kind: "2026 · Airline internship · internal",
+    title: "Aircraft Performance Monitoring (APM) Report Converter",
+    status: "Developed and tested locally, not in production",
+    summary:
+      "A web application that turns raw engine performance monitoring data files (TXT) into monthly Excel and PDF reports. I developed the flow for Boeing B737-800 aircraft, which uses two file types (SFP and NON SFP), and fixed the points that could produce a wrong report without anyone noticing.",
+    tags: ["Vue 3", "Vite", "Vuetify", "Express", "TypeScript", "Sequelize", "MariaDB", "Python", "LibreOffice", "node:test"],
+    facts: [
+      { label: "Frontend", value: "Vue 3 + Vite + Vuetify" },
+      { label: "Backend", value: "Express + TypeScript + Sequelize + MariaDB" },
+      { label: "Reports", value: "Python script + LibreOffice (Excel and PDF)" },
+      { label: "Testing", value: "node:test" },
+    ],
+    sections: {
+      needs: {
+        title: "What users need",
+        text: "Drawn from the work, not from an official document.",
+        points: [
+          "A monthly report generated automatically from the raw files.",
+          "Accurate P-Factor values that do not carry over old data.",
+          "Data errors that are detected and explained in plain language, instead of a silently wrong result.",
+          "A report that looks complete when it is printed to PDF.",
+        ],
+      },
+      flow: { title: "How a report is made" },
+      problems: {
+        title: "Problems found and fixed",
+        points: [
+          "The CA page was cut off in the PDF. The print area did not move when rows were added, so the chart section went missing.",
+          "Converting only one file type showed old P-Factor values from the database for aircraft that had no data in the file.",
+          "Problem data could slip through silently: the same tail number in two files, or a date that could not be read.",
+        ],
+      },
+      fixes: {
+        title: "What I added",
+        points: [
+          "The CA print area follows the number of rows, so the chart section shows in full in the PDF.",
+          "P-Factor for the report month is calculated from the uploaded files only. Aircraft without data show \"-\".",
+          "Validation: an aircraft that appears in more than one file is rejected with a clear message, and a row with an unreadable date stops the conversion with the row number and its raw value.",
+          "Non-fatal warnings in the frontend (toasts) for rows outside the selected month, a file with no data in that month, and an aircraft that is not registered yet. They do not block the download.",
+          "Exact duplicate rows are written to the backend log. This does not change the calculation.",
+        ],
+      },
+      testing: {
+        title: "Testing",
+        points: [
+          "44 automated tests with 17 synthetic fixtures: SFP only, SFP + NON SFP together, duplicate tail, fewer than 20 rows, tail without ESN, unregistered tail, empty or corrupt file, two months in one file, broken date, duplicate rows, aircraft code suffix, and the P-Factor calculation.",
+          "Mutation testing: I deliberately broke the code 14 times and checked that the tests failed each time. All 14 were caught.",
+          "Manual end-to-end testing in a local environment (local frontend and backend) with one month of raw files: a normal conversion with no warnings, the warning cases, the duplicate-tail and broken-date errors, then a check of the PDF and Excel output.",
+        ],
+      },
+      slots: {
+        title: "Screens",
+        text: "Mockups drawn with sample data. They are not screenshots of the real tool.",
+      },
+    },
+  },
+  {
+    id: "miles",
+    kind: "Nov 2026 · Garuda Indonesia internship · QA",
+    title: "QA Testing, GarudaMiles Award Redemption",
+    subtitle: "E-commerce, Garuda Indonesia",
+    status: "Tested in a dev environment before go-live",
+    summary:
+      "QA testing of a new feature on the Garuda Indonesia website that lets GarudaMiles members redeem miles for flight tickets (award redemption). I tested it in a dev environment before go-live, as a software developer intern assigned to QA.",
+    tags: ["Exploratory Testing", "Regression Testing", "Test Cases", "Bug Reports", "Chrome DevTools", "Kibana", "2C2P Sandbox"],
+    facts: [
+      { label: "Role", value: "QA Intern" },
+      { label: "Period", value: "Nov 2026" },
+      { label: "Tools", value: "Chrome DevTools (Network, Console), Kibana, 2C2P payment sandbox" },
+      { label: "Method", value: "Exploratory testing and repeated regression retests" },
+    ],
+    sections: {
+      flow: {
+        title: "Flow under test",
+        text: "From searching for an award flight to the booking showing up in My Trip.",
+      },
+      scope: {
+        title: "Test coverage",
+        points: [
+          "One-way (domestic and international) and return trips.",
+          "Multiple passengers (including an infant) and Business cabin.",
+          "Garuda-operated flights and airline partner flights.",
+          "Miles balance before and after, confirmation email, issuance status, and OTP.",
+        ],
+      },
+      method: {
+        title: "How I tested",
+        points: [
+          "Exploratory testing plus repeated regression retests.",
+          "Writing test cases and standard bug reports: title, steps, expected vs actual, severity, and evidence.",
+          "Cross-checking what the UI shows against Network and Console in Chrome DevTools and against server logs in Kibana.",
+        ],
+      },
+      templates: {
+        title: "Templates I work with",
+        text: "Both examples are fictional and generic. They are not from the feature I tested.",
+      },
+      layers: {
+        title: "DevTools vs Kibana",
+        text: "The browser and the server each show half of the story, so I cross-check both.",
+      },
+      learned: {
+        title: "What I learned",
+        points: [
+          "Writing bug reports that someone else can reproduce.",
+          "Telling severity apart from priority.",
+          "Backing up a finding with evidence instead of assumptions.",
+          "Reading server logs in Kibana.",
+          "Understanding the payment and issuance flow end to end.",
+        ],
+      },
+      view: {
+        title: "How to view",
+        points: [
+          "The feature was tested in an internal dev environment, so it is not publicly accessible.",
+          "What you can see here: this case study, the flow diagram, the coverage matrix, and the template examples.",
+        ],
+      },
+    },
+  },
+];
+
+// Images for the APM case study. These are mockups drawn with sample data, not screenshots of the
+// real tool. To use a real screenshot instead, replace the file in /public/projects (keep it free of
+// real data, logos, and internal system names).
+export const apmSlots: ImageSlot[] = [
+  { title: "Upload dialog", show: "Choosing the report month and adding one SFP and one NON SFP file.", image: "/projects/apm-upload.png" },
+  { title: "Warning toasts", show: "After a conversion, non-blocking warnings appear and the downloads stay available.", image: "/projects/apm-toasts.png" },
+  { title: "Error message", show: "A file with the same aircraft as another file is rejected with a clear message.", image: "/projects/apm-error.png" },
+  { title: "CA page", show: "The CA page of the PDF with the table and the chart section complete.", image: "/projects/apm-ca-page.png" },
+  { title: "End to end", show: "From choosing files to converting and getting the downloads, with the warnings.", image: "/projects/apm-flow.gif" },
 ];
 
 export const thesis = {
