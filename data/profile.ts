@@ -198,7 +198,7 @@ export const projects: Project[] = [
 export const caseStudies: CaseStudy[] = [
   {
     id: "apm",
-    kind: "2026 · Airline internship · internal",
+    kind: "2026 · Garuda Indonesia internship · internal",
     title: "Aircraft Performance Monitoring (APM) Report Converter",
     status: "Developed and tested locally, not in production",
     summary:
@@ -256,7 +256,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     id: "miles",
-    kind: "Nov 2026 · Garuda Indonesia internship · QA",
+    kind: "2026 · Garuda Indonesia internship · QA",
     title: "QA Testing, GarudaMiles Award Redemption",
     subtitle: "E-commerce, Garuda Indonesia",
     status: "Tested in a dev environment before go-live",
